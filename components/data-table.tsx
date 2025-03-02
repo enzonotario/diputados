@@ -23,6 +23,7 @@ interface DataTableProps<T> {
   searchable?: boolean
   searchKeys?: string[]
   emptyMessage?: string
+  additionalFilters?: React.ReactNode
 }
 
 export function DataTable<T>({
@@ -34,6 +35,7 @@ export function DataTable<T>({
   searchable = false,
   searchKeys = [],
   emptyMessage = "No hay datos disponibles",
+    additionalFilters
 }: DataTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState("")
 
@@ -84,6 +86,8 @@ export function DataTable<T>({
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+
+          {additionalFilters}
         </div>
       )}
 

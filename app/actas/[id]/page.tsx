@@ -61,13 +61,14 @@ export default function ActaDetailPage() {
 
   // Preparar datos para la tabla de votos
   const votosConDiputados = acta.votos.map((voto) => {
-    const diputado = diputados.find((d) => d.id === voto.diputado)
+    const diputado = diputados.find((d) => `${d.apellido}, ${d.nombre}` === voto.diputado)
     return {
       ...voto,
       nombreCompleto: diputado ? `${diputado.apellido}, ${diputado.nombre}` : voto.diputado,
       provincia: diputado?.provincia || "Desconocida",
       bloque: diputado?.bloque || "Desconocido",
       foto: diputado?.foto || "",
+      diputadoId: diputado?.id,
     }
   })
 
@@ -159,7 +160,7 @@ export default function ActaDetailPage() {
                 Acta N° {acta.numeroActa} - {formatDate(acta.fecha)}
               </CardDescription>
             </div>
-            <Badge variant={acta.resultado === "APROBADO" ? "success" : "destructive"} className="text-base py-1 px-3">
+            <Badge variant={acta.resultado === "afirmativo" ? "teal" : "red"} className="text-base py-1 px-3">
               {acta.resultado}
             </Badge>
           </div>
@@ -232,7 +233,7 @@ export default function ActaDetailPage() {
             columns={columnasVotos}
             searchable
             searchKeys={["nombreCompleto", "bloque", "provincia", "tipoVoto"]}
-            onRowClick={(voto) => router.push(`/diputados/${voto.diputado}`)}
+            onRowClick={(voto) => router.push(`/diputados/${voto.diputadoId}`)}
             emptyMessage="No se encontraron votos para esta acta."
           />
         </CardContent>

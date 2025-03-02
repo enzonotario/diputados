@@ -52,7 +52,7 @@ export function FilterSidebar({ filters, onFilterChange, filterOptions, onReset 
         </Button>
       </div>
 
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {filterOptions.map((option) => (
           <div key={option.key} className="space-y-2">
             <Label htmlFor={option.key}>{option.label}</Label>

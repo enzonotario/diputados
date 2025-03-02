@@ -101,7 +101,16 @@ export function filterActas(actas: Acta[], filters: FilterConfig): Acta[] {
 
       const actaValue = acta[key as keyof Acta]
 
+      if (key === "fechaStart") {
+        return new Date(acta.fecha) >= new Date(value as string)
+      } else if (key === "fechaEnd") {
+        return new Date(acta.fecha) <= new Date(value as string)
+      }
+
       if (typeof actaValue === "string") {
+        if (value === "all") {
+          return true
+        }
         return actaValue.toLowerCase().includes(String(value).toLowerCase())
       } else if (typeof actaValue === "number") {
         // Para filtros numéricos, podemos implementar comparaciones
@@ -155,7 +164,7 @@ export function getYearsFromActas(actas: Acta[]): string[] {
   return Array.from(years).sort((a, b) => b.localeCompare(a)) // Ordenar de más reciente a más antiguo
 }
 
-export function calcularEstadisticasDiputado(diputadoId: string, actas: Acta[]) {
+export function calcularEstadisticasDiputado(diputado: Diputado, actas: Acta[]) {
   let totalVotaciones = 0
   let votosAfirmativos = 0
   let votosNegativos = 0
@@ -165,10 +174,9 @@ export function calcularEstadisticasDiputado(diputadoId: string, actas: Acta[]) 
   actas.forEach((acta) => {
     totalVotaciones++
 
-    const voto = acta.votos.find((v) => v.diputado === diputadoId)
+    const voto = acta.votos.find((v) => v.diputado === `${diputado.apellido}, ${diputado.nombre}`)
 
     if (!voto) {
-      ausencias++
       return
     }
 
@@ -182,8 +190,10 @@ export function calcularEstadisticasDiputado(diputadoId: string, actas: Acta[]) 
       case "abstencion":
         abstenciones++
         break
-      default:
+      case "ausente":
         ausencias++
+      default:
+        break
     }
   })
 

@@ -6,10 +6,10 @@ import { getActas } from "@/lib/api"
 import type { Acta, SortConfig, FilterConfig } from "@/lib/types"
 import { sortActas, filterActas, formatDate, getYearsFromActas, getUniqueValues } from "@/lib/utils"
 import { DataTable } from "@/components/data-table"
-import { FilterSidebar } from "@/components/filter-sidebar"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Loader2 } from "lucide-react"
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 
 export default function ActasPage() {
   const router = useRouter()
@@ -34,45 +34,37 @@ export default function ActasPage() {
   }
 
   const handleFilterChange = (newFilters: FilterConfig) => {
-    setFilters(newFilters)
+    if (selectedYear && selectedYear !== "todos") {
+      const { fechaStart, fechaEnd, ...restFilters } = newFilters
+      setFilters({
+        ...restFilters,
+        fechaStart: selectedYear ? `${selectedYear}-01-01` : null,
+        fechaEnd: selectedYear ? `${selectedYear}-12-31` : null,
+      })
+    } else {
+      setFilters(newFilters)
+    }
   }
 
   const handleYearChange = (year: string) => {
     setSelectedYear(year)
-    // Si se selecciona un año, actualizar los filtros para incluir ese año
-    if (year) {
+    if (year && year !== "todos") {
       const yearStart = `${year}-01-01`
       const yearEnd = `${year}-12-31`
-      setFilters((prev) => ({
-        ...prev,
-        fechaStart: yearStart,
-        fechaEnd: yearEnd,
-      }))
+      setFilters((prev) => {
+        return { ...prev, fechaStart: yearStart, fechaEnd: yearEnd }
+      })
     } else {
-      // Si se deselecciona el año, eliminar los filtros de fecha
       const { fechaStart, fechaEnd, ...restFilters } = filters
       setFilters(restFilters)
     }
   }
 
-  // Filtrar y ordenar actas
   const filteredActas = filterActas(actas, filters)
   const sortedActas = sortActas(filteredActas, sortConfig)
 
-  // Obtener años disponibles para el filtro
   const years = getYearsFromActas(actas)
-
-  // Obtener valores únicos para los filtros
-  const periodos = getUniqueValues(actas, "periodo")
   const resultados = getUniqueValues(actas, "resultado")
-  const presidentes = getUniqueValues(actas, "presidente")
-
-  const filterOptions = [
-    { key: "titulo", label: "Título", type: "text" },
-    { key: "periodo", label: "Período", type: "select", options: periodos },
-    { key: "resultado", label: "Resultado", type: "select", options: resultados },
-    { key: "presidente", label: "Presidente", type: "select", options: presidentes },
-  ]
 
   const columns = [
     {
@@ -91,7 +83,7 @@ export default function ActasPage() {
       title: "Resultado",
       sortable: true,
       render: (acta: Acta) => (
-        <Badge variant={acta.resultado === "APROBADO" ? "success" : "destructive"}>{acta.resultado}</Badge>
+        <Badge variant={acta.resultado === "afirmativo" ? "teal" : "red"}>{acta.resultado}</Badge>
       ),
     },
     {
@@ -131,12 +123,8 @@ export default function ActasPage() {
         </TabsList>
       </Tabs>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="md:col-span-1">
-          <FilterSidebar filters={filters} onFilterChange={handleFilterChange} filterOptions={filterOptions} />
-        </div>
-
-        <div className="md:col-span-3">
+      <div className="grid grid-cols-1 gap-6">
+        <div className="">
           {loading ? (
             <div className="flex justify-center items-center h-64">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -148,9 +136,29 @@ export default function ActasPage() {
               sortConfig={sortConfig}
               onSort={handleSort}
               searchable
-              searchKeys={["titulo", "resultado", "presidente"]}
+              searchKeys={["titulo", "resultado"]}
               onRowClick={(acta) => router.push(`/actas/${acta.id}`)}
               emptyMessage="No se encontraron actas con los filtros aplicados."
+              additionalFilters={(
+                <div className="flex px-2 gap-2">
+                  <Select
+                    value={filters.resultado || 'all'}
+                    onValueChange={(value) => handleFilterChange({ ...filters, resultado: value })}
+                  >
+                    <SelectTrigger id="resultado">
+                      <SelectValue placeholder="Seleccionar resultado" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos los resultados</SelectItem>
+                      {resultados.map((resultado) => (
+                        <SelectItem key={resultado} value={resultado}>
+                          {resultado}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             />
           )}
         </div>

@@ -49,6 +49,6 @@ export interface SortConfig {
 }
 
 export interface FilterConfig {
-  [key: string]: string | number | boolean | null
+  [key: string]: string
 }
 

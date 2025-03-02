@@ -54,8 +54,6 @@ export default function DiputadosPage() {
   const generos = getUniqueValues(diputados, "genero")
 
   const filterOptions = [
-    { key: "nombre", label: "Nombre", type: "text" },
-    { key: "apellido", label: "Apellido", type: "text" },
     { key: "provincia", label: "Provincia", type: "select", options: provincias },
     { key: "bloque", label: "Bloque", type: "select", options: bloques },
     { key: "genero", label: "Género", type: "select", options: generos },
