@@ -2,9 +2,16 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { getDiputados } from "@/lib/api"
+import {getActas, getDiputados} from "@/lib/api"
 import type { Diputado, SortConfig, FilterConfig } from "@/lib/types"
-import { sortDiputados, filterDiputados, formatDate, isDiputadoActivo, getUniqueValues } from "@/lib/utils"
+import {
+  sortDiputados,
+  filterDiputados,
+  formatDate,
+  isDiputadoActivo,
+  getUniqueValues,
+  calcularEstadisticasDiputado
+} from "@/lib/utils"
 import { DataTable } from "@/components/data-table"
 import { FilterSidebar } from "@/components/filter-sidebar"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -24,7 +31,18 @@ export default function DiputadosPage() {
     async function fetchData() {
       setLoading(true)
       const data = await getDiputados()
-      setDiputados(data)
+      const actas = await getActas()
+      const diputados = data
+        .map((diputado) => {
+          const actasDiputado = actas.filter(
+              (acta) => acta.votos.some((voto) => voto.diputado === `${diputado.apellido}, ${diputado.nombre}`)
+              )
+          const estadisticas = calcularEstadisticasDiputado(diputado, actasDiputado)
+          return { ...diputado, estadisticas, actasDiputado }
+        })
+        .filter((diputado) => diputado.actasDiputado.length > 0)
+
+      setDiputados(diputados)
       setLoading(false)
     }
     fetchData()
@@ -101,6 +119,16 @@ export default function DiputadosPage() {
       title: "Fin Mandato",
       sortable: true,
       render: (diputado: Diputado) => formatDate(diputado.periodoMandato.fin),
+    },
+    {
+      key: "estadisticas.presentismo",
+        title: "Presentismo",
+        sortable: true,
+        render: (diputado: Diputado) => (
+          <Badge variant={diputado.estadisticas.presentismo > 80 ? "teal" : "red"}>
+            {diputado.estadisticas.presentismo}%
+          </Badge>
+        ),
     },
   ]
 
