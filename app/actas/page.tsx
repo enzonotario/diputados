@@ -2,10 +2,10 @@ import ActasPageContent from "@/app/actas/ActasPageContent";
 import {Metadata} from "next";
 
 export const metadata: Metadata = {
-  title: "Actas | actas.argentinadatos.com",
+  title: "Actas | diputados.argentinadatos.com",
   description: "Descubre las actas de la Cámara de Diputados de la Nación Argentina y cómo votaron los diputados.",
   openGraph: {
-    title: "Actas | actas.argentinadatos.com",
+    title: "Actas | diputados.argentinadatos.com",
     description: "Descubre las actas de la Cámara de Diputados de la Nación Argentina y cómo votaron los diputados.",
     images: [{
       url: '/og.png',
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Actas | actas.argentinadatos.com",
+    title: "Actas | diputados.argentinadatos.com",
     description: "Descubre las actas de la Cámara de Diputados de la Nación Argentina y cómo votaron los diputados.",
     images: ['/og.png']
   }
