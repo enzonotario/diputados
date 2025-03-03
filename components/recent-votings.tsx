@@ -93,19 +93,19 @@ export function RecentVotings() {
                 <div className="grid grid-cols-4 gap-2 text-xs text-center">
                     <div className="flex flex-col items-center justify-center text-teal-800 dark:text-teal-300">
                         <span>Afirmativos</span>
-                        <span>{((acta.votosAfirmativos / acta.votos.length) * 100).toFixed(2)}% ({acta.votosAfirmativos})</span>
+                        <span>{((acta.votosAfirmativos / acta.votos.length) * 100).toFixed(0)}% ({acta.votosAfirmativos})</span>
                     </div>
                     <div className="flex flex-col items-center justify-center text-red-800 dark:text-red-300">
                         <span>Negativos</span>
-                        <span>{((acta.votosNegativos / acta.votos.length) * 100).toFixed(2)}% ({acta.votosNegativos})</span>
+                        <span>{((acta.votosNegativos / acta.votos.length) * 100).toFixed(0)}% ({acta.votosNegativos})</span>
                     </div>
                     <div className="flex flex-col items-center justify-center text-yellow-800 dark:text-yellow-300">
                         <span>Abstenciones</span>
-                        <span>{((acta.abstenciones / acta.votos.length) * 100).toFixed(2)}% ({acta.abstenciones})</span>
+                        <span>{((acta.abstenciones / acta.votos.length) * 100).toFixed(0)}% ({acta.abstenciones})</span>
                     </div>
                     <div className="flex flex-col items-center justify-center text-gray-800 dark:text-gray-300">
                         <span>Ausentes</span>
-                        <span>{((acta.ausentes / acta.votos.length) * 100).toFixed(2)}% ({acta.ausentes})</span>
+                        <span>{((acta.ausentes / acta.votos.length) * 100).toFixed(0)}% ({acta.ausentes})</span>
                     </div>
                 </div>
 

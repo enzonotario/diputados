@@ -1,17 +1,15 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useParams, useRouter } from "next/navigation"
-import { getActaById, getDiputados } from "@/lib/api"
-import type { Acta, Diputado } from "@/lib/types"
-import { formatDate } from "@/lib/utils"
-import { DataTable } from "@/components/data-table"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Loader2, ArrowLeft, CheckCircle, XCircle, MinusCircle, AlertCircle } from "lucide-react"
-import { Progress } from "@/components/ui/progress"
+import {useEffect, useState} from "react"
+import {useParams, useRouter} from "next/navigation"
+import {getActaById, getDiputados} from "@/lib/api"
+import type {Acta, Diputado} from "@/lib/types"
+import {formatDate} from "@/lib/utils"
+import {DataTable} from "@/components/data-table"
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
+import {Badge} from "@/components/ui/badge"
+import {AlertCircle, CheckCircle, Loader2, MinusCircle, User, XCircle} from "lucide-react" // Íconos de ejemplo, ajusta según tu librería
 
 export default function ActaDetailPage() {
   const params = useParams()
@@ -71,10 +69,11 @@ export default function ActaDetailPage() {
 
   // Calcular porcentajes para la visualización
   const total = acta.votosAfirmativos + acta.votosNegativos + acta.abstenciones + acta.ausentes
-  const porcentajeAfirmativos = total > 0 ? (acta.votosAfirmativos / total) * 100 : 0
-  const porcentajeNegativos = total > 0 ? (acta.votosNegativos / total) * 100 : 0
-  const porcentajeAbstenciones = total > 0 ? (acta.abstenciones / total) * 100 : 0
-  const porcentajeAusentes = total > 0 ? (acta.ausentes / total) * 100 : 0
+  const presentes = acta.presentes || acta.votos.filter(v => v.tipoVoto !== "ausente").length
+  const ausentes = acta.ausentes || acta.votos.filter(v => v.tipoVoto === "ausente").length
+  const votosAfirmativos = acta.votosAfirmativos || 0
+  const votosNegativos = acta.votosNegativos || 0
+  const abstenciones = acta.abstenciones || 0
 
   // Columnas para la tabla de votos
   const columnasVotos = [
@@ -112,7 +111,7 @@ export default function ActaDetailPage() {
           case "afirmativo":
             return (
               <div className="flex items-center">
-                <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+                <CheckCircle className="h-5 w-5 text-teal-500 mr-2" />
                 <span>Afirmativo</span>
               </div>
             )
@@ -181,36 +180,70 @@ export default function ActaDetailPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <div>
-            <h3 className="text-sm font-medium text-muted-foreground mb-2">Resultados</h3>
-            <div className="space-y-4">
-              <div>
-                <div className="flex justify-between mb-1">
-                  <span>Afirmativos ({acta.votosAfirmativos})</span>
-                  <span>{Math.round(porcentajeAfirmativos)}%</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex-1 space-y-4">
+              <h3 className="text-lg font-medium">Asistencia</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-muted p-4 rounded-lg text-center">
+                  <span className="text-3xl font-bold text-teal-700 dark:text-teal-400">{presentes}</span>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">Presentes</p>
                 </div>
-                <Progress value={porcentajeAfirmativos} className="h-2 bg-muted" />
+                <div className="bg-muted p-4 rounded-lg text-center">
+                  <span className="text-3xl font-bold text-red-700 dark:text-red-400">{ausentes}</span>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">Ausentes</p>
+                </div>
               </div>
-              <div>
-                <div className="flex justify-between mb-1">
-                  <span>Negativos ({acta.votosNegativos})</span>
-                  <span>{Math.round(porcentajeNegativos)}%</span>
-                </div>
-                <Progress value={porcentajeNegativos} className="h-2 bg-muted" />
+              <div className="flex flex-wrap gap-1">
+                {[...Array(presentes)].map((_, i) => (
+                    <User
+                        key={`presente-${i}`}
+                        className="h-6 w-6 text-teal-500 dark:text-teal-400"
+                    />
+                ))}
+                {[...Array(ausentes)].map((_, i) => (
+                    <User
+                        key={`ausente-${i}`}
+                        className="h-6 w-6 text-red-500 dark:text-red-400"
+                    />
+                ))}
               </div>
-              <div>
-                <div className="flex justify-between mb-1">
-                  <span>Abstenciones ({acta.abstenciones})</span>
-                  <span>{Math.round(porcentajeAbstenciones)}%</span>
+            </div>
+
+            <div className="flex-1 space-y-4">
+              <h3 className="text-lg font-medium">Resultados</h3>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-muted p-4 rounded-lg text-center">
+                  <span className="text-3xl font-bold text-teal-700 dark:text-teal-400">{votosAfirmativos}</span>
+                  <p className="text-sm text-gray-500">Afirmativos</p>
                 </div>
-                <Progress value={porcentajeAbstenciones} className="h-2 bg-muted" />
+                <div className="bg-muted p-4 rounded-lg text-center">
+                  <span className="text-3xl font-bold text-red-700 dark:text-red-400">{votosNegativos}</span>
+                  <p className="text-sm text-gray-500">Negativos</p>
+                </div>
+                <div className="bg-muted p-4 rounded-lg text-center">
+                  <span className="text-3xl font-bold text-orange-700 dark:text-orange-400">{abstenciones}</span>
+                  <p className="text-sm text-gray-500">Abstenciones</p>
+                </div>
               </div>
-              <div>
-                <div className="flex justify-between mb-1">
-                  <span>Ausentes ({acta.ausentes})</span>
-                  <span>{Math.round(porcentajeAusentes)}%</span>
-                </div>
-                <Progress value={porcentajeAusentes} className="h-2 bg-muted" />
+              <div className="flex flex-wrap gap-1">
+                {[...Array(votosAfirmativos)].map((_, i) => (
+                    <CheckCircle
+                        key={`afirmativo-${i}`}
+                        className="h-6 w-6 text-teal-500 dark:text-teal-400"
+                    />
+                ))}
+                {[...Array(votosNegativos)].map((_, i) => (
+                    <XCircle
+                        key={`negativo-${i}`}
+                        className="h-6 w-6 text-red-500 dark:text-red-400"
+                    />
+                ))}
+                {[...Array(abstenciones)].map((_, i) => (
+                    <MinusCircle
+                        key={`abstencion-${i}`}
+                        className="h-6 w-6 text-orange-500 dark:text-orange-400"
+                    />
+                ))}
               </div>
             </div>
           </div>

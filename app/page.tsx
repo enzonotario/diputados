@@ -1,7 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { LandmarkIcon, Users, FileText, BarChart3, Calendar } from "lucide-react"
+import { LandmarkIcon } from "lucide-react"
 import { RecentVotings } from "@/components/recent-votings"
 
 export default function Home() {
@@ -17,15 +16,14 @@ export default function Home() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4">
           <Button asChild size="lg">
-            <Link href="/diputados">Ver Diputados</Link>
+            <Link href="/actas">Ver Actas</Link>
           </Button>
           <Button asChild variant="outline" size="lg">
-            <Link href="/actas">Ver Actas</Link>
+            <Link href="/diputados">Ver Diputados</Link>
           </Button>
         </div>
       </section>
-      
-      {/* Recent Votings Section */}
+
       <RecentVotings />
     </div>
   )

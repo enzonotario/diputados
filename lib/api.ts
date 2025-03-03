@@ -31,7 +31,10 @@ export async function getActas(): Promise<Acta[]> {
     if (!response.ok) {
       throw new Error(`Error fetching actas: ${response.statusText}`)
     }
-    return await response.json()
+    return (await response.json()).map((acta: Acta) => ({
+        ...acta,
+        votos: acta.votos.filter((voto) => voto.tipoVoto !== "presidente")
+    }))
   } catch (error) {
     console.error("Error fetching actas:", error)
     return []
