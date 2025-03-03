@@ -72,22 +72,25 @@ export function RecentVotings() {
           {actas.map((acta) => (
             <Link href={`/actas/${acta.id}`} key={acta.id} className="block group">
               <Card className="h-full overflow-hidden hover:border-gray-500 dark:hover:border-gray-600">
-                <CardHeader className="pb-2">
-                  <CardDescription className="flex items-center">
-                    <Calendar className="h-3 w-3 mr-1" />
-                    {formatDate(acta.fecha)}
+                <CardHeader className="p-3">
+                  <CardDescription>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <Calendar className="h-3 w-3 mr-1" />
+                        {formatDate(acta.fecha)}
+                      </div>
+
+                      <Badge variant={acta.resultado === "afirmativo" ? "teal" : "red"}>
+                        {acta.resultado}
+                      </Badge>
+                    </div>
                   </CardDescription>
                   <CardTitle className="line-clamp-2 text-lg group-hover:text-primary transition-colors">
                     {acta.titulo}
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <Badge variant={acta.resultado === "afirmativo" ? "teal" : "red"}>
-                    {acta.resultado}
-                  </Badge>
-                </CardContent>
 
-                <div className="grid grid-cols-4 gap-2 text-xs">
+                <div className="grid grid-cols-4 gap-2 text-xs text-center">
                     <div className="flex flex-col items-center justify-center text-teal-800 dark:text-teal-300">
                         <span>Afirmativos</span>
                         <span>{((acta.votosAfirmativos / acta.votos.length) * 100).toFixed(2)}% ({acta.votosAfirmativos})</span>
@@ -106,13 +109,11 @@ export function RecentVotings() {
                     </div>
                 </div>
 
-                <div className="flex items-center space-x-4 text-sm">
-                  <div className="w-full flex flex-row">
-                    <div style={{width: `${(acta.votosAfirmativos / acta.votos.length) * 100}%`}} className="h-2 bg-teal-500 dark:bg-teal-400"></div>
-                    <div style={{width: `${(acta.votosNegativos / acta.votos.length) * 100}%`}} className="h-2 bg-red-500 dark:bg-red-400"></div>
-                    <div style={{width: `${(acta.abstenciones / acta.votos.length) * 100}%`}} className="h-2 bg-yellow-400 dark:bg-yellow-400"></div>
-                    <div style={{width: `${(acta.ausentes / acta.votos.length) * 100}%`}} className="h-2 bg-gray-500 dark:bg-gray-400"></div>
-                  </div>
+                <div className="w-full flex flex-row">
+                  <div style={{width: `${(acta.votosAfirmativos / acta.votos.length) * 100}%`}} className="h-2 bg-teal-500 dark:bg-teal-400"></div>
+                  <div style={{width: `${(acta.votosNegativos / acta.votos.length) * 100}%`}} className="h-2 bg-red-500 dark:bg-red-400"></div>
+                  <div style={{width: `${(acta.abstenciones / acta.votos.length) * 100}%`}} className="h-2 bg-yellow-400 dark:bg-yellow-400"></div>
+                  <div style={{width: `${(acta.ausentes / acta.votos.length) * 100}%`}} className="h-2 bg-gray-500 dark:bg-gray-400"></div>
                 </div>
               </Card>
             </Link>
