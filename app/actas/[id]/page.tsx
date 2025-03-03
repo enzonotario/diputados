@@ -150,7 +150,29 @@ export default function ActaDetailPage() {
             <div>
               <CardTitle className="text-2xl">{acta.titulo}</CardTitle>
               <CardDescription>
-                Acta N° {acta.numeroActa} - {formatDate(acta.fecha)}
+                <div className="flex flex-row flex-wrap gap-4">
+                  <div className="flex gap-2">
+                    <span>Acta N°:</span>
+                    <span className="font-medium">{acta.numeroActa}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <span>Fecha:</span>
+                    <span className="font-medium">{formatDate(acta.fecha)}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <span>Período:</span>
+                    <span className="font-medium">{acta.periodo}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <span>Reunión:</span>
+                    <span className="font-medium">{acta.reunion}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <span>Presidente:</span>
+                    <span className="font-medium">{acta.presidente}</span>
+                  </div>
+                </div>
+
               </CardDescription>
             </div>
             <Badge variant={acta.resultado === "afirmativo" ? "teal" : "red"} className="text-base py-1 px-3">
@@ -159,56 +181,36 @@ export default function ActaDetailPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-2">Detalles</h3>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span>Período:</span>
-                  <span className="font-medium">{acta.periodo}</span>
+          <div>
+            <h3 className="text-sm font-medium text-muted-foreground mb-2">Resultados</h3>
+            <div className="space-y-4">
+              <div>
+                <div className="flex justify-between mb-1">
+                  <span>Afirmativos ({acta.votosAfirmativos})</span>
+                  <span>{Math.round(porcentajeAfirmativos)}%</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Reunión:</span>
-                  <span className="font-medium">{acta.reunion}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Presidente:</span>
-                  <span className="font-medium">{acta.presidente}</span>
-                </div>
+                <Progress value={porcentajeAfirmativos} className="h-2 bg-muted" />
               </div>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-2">Resultados</h3>
-              <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span>Afirmativos ({acta.votosAfirmativos})</span>
-                    <span>{Math.round(porcentajeAfirmativos)}%</span>
-                  </div>
-                  <Progress value={porcentajeAfirmativos} className="h-2 bg-muted" />
+              <div>
+                <div className="flex justify-between mb-1">
+                  <span>Negativos ({acta.votosNegativos})</span>
+                  <span>{Math.round(porcentajeNegativos)}%</span>
                 </div>
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span>Negativos ({acta.votosNegativos})</span>
-                    <span>{Math.round(porcentajeNegativos)}%</span>
-                  </div>
-                  <Progress value={porcentajeNegativos} className="h-2 bg-muted" />
+                <Progress value={porcentajeNegativos} className="h-2 bg-muted" />
+              </div>
+              <div>
+                <div className="flex justify-between mb-1">
+                  <span>Abstenciones ({acta.abstenciones})</span>
+                  <span>{Math.round(porcentajeAbstenciones)}%</span>
                 </div>
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span>Abstenciones ({acta.abstenciones})</span>
-                    <span>{Math.round(porcentajeAbstenciones)}%</span>
-                  </div>
-                  <Progress value={porcentajeAbstenciones} className="h-2 bg-muted" />
+                <Progress value={porcentajeAbstenciones} className="h-2 bg-muted" />
+              </div>
+              <div>
+                <div className="flex justify-between mb-1">
+                  <span>Ausentes ({acta.ausentes})</span>
+                  <span>{Math.round(porcentajeAusentes)}%</span>
                 </div>
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span>Ausentes ({acta.ausentes})</span>
-                    <span>{Math.round(porcentajeAusentes)}%</span>
-                  </div>
-                  <Progress value={porcentajeAusentes} className="h-2 bg-muted" />
-                </div>
+                <Progress value={porcentajeAusentes} className="h-2 bg-muted" />
               </div>
             </div>
           </div>
