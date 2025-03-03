@@ -42,7 +42,9 @@ export default function RootLayout({
                      className="text-primary">argentinadatos.com</a>.
                 </p>
 
-                <a href="https://github.com"
+                <a href="https://github.com/enzonotario/diputados"
+                   target="_blank"
+                   rel="noopener noreferrer"
                    className="flex items-center gap-2 text-sm text-muted-foreground"
                 >
                   <span>Reportar errores y colaborar</span>
