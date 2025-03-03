@@ -4,7 +4,7 @@ import {useEffect, useState} from "react"
 import {useParams, useRouter} from "next/navigation"
 import {getActas, getDiputadoById} from "@/lib/api"
 import type {Acta, Diputado} from "@/lib/types"
-import {calcularEstadisticasDiputado, formatDate} from "@/lib/utils"
+import {calcularEstadisticasDiputado, formatDate, sortActas} from "@/lib/utils"
 import {DataTable} from "@/components/data-table"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
@@ -18,6 +18,7 @@ export default function DiputadoDetailPage() {
   const [diputado, setDiputado] = useState<Diputado | null>(null)
   const [actas, setActas] = useState<Acta[]>([])
   const [loading, setLoading] = useState(true)
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: "fecha", direction: "desc" })
 
   useEffect(() => {
     async function fetchData() {
@@ -33,6 +34,10 @@ export default function DiputadoDetailPage() {
     }
     fetchData()
   }, [params.id])
+
+  const handleSort = (key: string, direction: "asc" | "desc") => {
+    setSortConfig({ key, direction })
+  }
 
   if (loading) {
     return (
@@ -59,6 +64,8 @@ export default function DiputadoDetailPage() {
       (acta) => acta.votos.some((voto) => voto.diputado === `${diputado.apellido}, ${diputado.nombre}`)
       && new Date(acta.fecha) >= new Date(diputado.periodoMandato.inicio)
   )
+
+  const actasDiputadoSorted = sortActas(actasDiputado, sortConfig)
 
   const estadisticas = calcularEstadisticasDiputado(diputado, actasDiputado)
 
@@ -199,12 +206,14 @@ export default function DiputadoDetailPage() {
         </CardHeader>
         <CardContent>
           <DataTable
-            data={actasDiputado}
+            data={actasDiputadoSorted}
             columns={columnasVotaciones}
             searchable
             searchKeys={["titulo", "resultado", "fecha"]}
             onRowClick={(acta) => router.push(`/actas/${acta.id}`)}
             emptyMessage="No se encontraron votaciones para este diputado."
+            sortConfig={sortConfig}
+            onSort={handleSort}
           />
         </CardContent>
       </Card>

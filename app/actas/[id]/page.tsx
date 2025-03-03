@@ -3,8 +3,8 @@
 import {useEffect, useState} from "react"
 import {useParams, useRouter} from "next/navigation"
 import {getActaById, getDiputados} from "@/lib/api"
-import type {Acta, Diputado} from "@/lib/types"
-import {formatDate} from "@/lib/utils"
+import type {Acta, Diputado, SortConfig} from "@/lib/types"
+import {formatDate, sortDiputados} from "@/lib/utils"
 import {DataTable} from "@/components/data-table"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
@@ -19,6 +19,7 @@ export default function ActaDetailPage() {
   const [acta, setActa] = useState<Acta | null>(null)
   const [diputados, setDiputados] = useState<Diputado[]>([])
   const [loading, setLoading] = useState(true)
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: "nombreCompleto", direction: "asc" })
 
   useEffect(() => {
     async function fetchData() {
@@ -34,6 +35,10 @@ export default function ActaDetailPage() {
     }
     fetchData()
   }, [params.id])
+
+  const handleSort = (key: string, direction: "asc" | "desc") => {
+    setSortConfig({ key, direction })
+  }
 
   if (loading) {
     return (
@@ -67,6 +72,8 @@ export default function ActaDetailPage() {
       diputadoId: diputado?.id,
     }
   })
+
+  const votosConDiputadosSorted = sortDiputados(votosConDiputados, sortConfig)
 
   const total = acta.votosAfirmativos + acta.votosNegativos + acta.abstenciones + acta.ausentes
   const presentes = acta.votosAfirmativos + acta.votosNegativos + acta.abstenciones
@@ -280,12 +287,14 @@ export default function ActaDetailPage() {
         </CardHeader>
         <CardContent>
           <DataTable
-            data={votosConDiputados}
+            data={votosConDiputadosSorted}
             columns={columnasVotos}
             searchable
             searchKeys={["nombreCompleto", "bloque", "provincia", "tipoVoto"]}
             onRowClick={(voto) => router.push(`/diputados/${voto.diputadoId}`)}
             emptyMessage="No se encontraron votos para esta acta."
+            sortConfig={sortConfig}
+            onSort={handleSort}
           />
         </CardContent>
       </Card>
