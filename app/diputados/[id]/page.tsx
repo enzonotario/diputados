@@ -46,9 +46,6 @@ export default function DiputadoDetailPage() {
   if (!diputado) {
     return (
       <div className="container py-10">
-        <Button variant="outline" onClick={() => router.back()} className="mb-6">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Volver
-        </Button>
         <Card>
           <CardHeader>
             <CardTitle>Diputado no encontrado</CardTitle>
@@ -108,89 +105,83 @@ export default function DiputadoDetailPage() {
   ]
 
   return (
-    <div className="container py-10">
-      <Button variant="outline" onClick={() => router.back()} className="mb-6">
-        <ArrowLeft className="mr-2 h-4 w-4" /> Volver
-      </Button>
-
-      <div>
-        <Card>
-          <CardHeader className="flex flex-row items-center gap-4">
-            <Avatar className="h-20 w-20">
-              <AvatarImage
-                src={diputado.foto || "/placeholder.svg?height=80&width=80"}
-                alt={`${diputado.nombre} ${diputado.apellido}`}
-              />
-              <AvatarFallback className="text-2xl">{`${diputado.nombre.charAt(0)}${diputado.apellido.charAt(0)}`}</AvatarFallback>
-            </Avatar>
-            <div>
-              <CardTitle>{`${diputado.nombre} ${diputado.apellido}`}</CardTitle>
-              <CardDescription>{diputado.provincia}</CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 gap-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Bloque</h3>
-                  <p>{diputado.bloque}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Género</h3>
-                  <p>{diputado.genero}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Período de Mandato</h3>
-                  <p>{`${formatDate(diputado.periodoMandato.inicio)} - ${formatDate(diputado.periodoMandato.fin)}`}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Fecha de Juramento</h3>
-                  <p>{formatDate(diputado.juramentoFecha)}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-6">
+    <div className="container flex flex-col py-10 gap-10">
+      <Card>
+        <CardHeader className="flex flex-row items-center gap-4">
+          <Avatar className="h-20 w-20">
+            <AvatarImage
+              src={diputado.foto || "/placeholder.svg?height=80&width=80"}
+              alt={`${diputado.nombre} ${diputado.apellido}`}
+            />
+            <AvatarFallback className="text-2xl">{`${diputado.nombre.charAt(0)}${diputado.apellido.charAt(0)}`}</AvatarFallback>
+          </Avatar>
+          <div>
+            <CardTitle>{`${diputado.nombre} ${diputado.apellido}`}</CardTitle>
+            <CardDescription>{diputado.provincia}</CardDescription>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <div className="flex justify-between mb-2">
-                  <span className="text-sm font-medium">Presentismo</span>
-                  <span className="text-sm font-medium">{estadisticas.presentismo}%</span>
-                </div>
-                <Progress value={estadisticas.presentismo} className="h-2" />
+                <h3 className="text-sm font-medium text-muted-foreground">Bloque</h3>
+                <p>{diputado.bloque}</p>
               </div>
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground">Género</h3>
+                <p>{diputado.genero}</p>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground">Período de Mandato</h3>
+                <p>{`${formatDate(diputado.periodoMandato.inicio)} - ${formatDate(diputado.periodoMandato.fin)}`}</p>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground">Fecha de Juramento</h3>
+                <p>{formatDate(diputado.juramentoFecha)}</p>
+              </div>
+            </div>
+          </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="rounded-lg border p-3">
-                  <div className="text-sm font-medium text-muted-foreground">Total Votaciones</div>
-                  <div className="text-2xl font-bold">{estadisticas.totalVotaciones}</div>
+          <div className="space-y-6">
+            <div>
+              <div className="flex justify-between mb-2">
+                <span className="text-sm font-medium">Presentismo</span>
+                <span className="text-sm font-medium">{estadisticas.presentismo}%</span>
+              </div>
+              <Progress value={estadisticas.presentismo} className="h-2" />
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="rounded-lg border p-3">
+                <div className="text-sm font-medium text-muted-foreground">Total Votaciones</div>
+                <div className="text-2xl font-bold">{estadisticas.totalVotaciones}</div>
+              </div>
+              <div className="rounded-lg border p-3 bg-green-50 dark:bg-green-950">
+                <div className="text-sm font-medium text-muted-foreground">Votos Afirmativos</div>
+                <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                  {estadisticas.votosAfirmativos}
                 </div>
-                <div className="rounded-lg border p-3 bg-green-50 dark:bg-green-950">
-                  <div className="text-sm font-medium text-muted-foreground">Votos Afirmativos</div>
-                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                    {estadisticas.votosAfirmativos}
-                  </div>
+              </div>
+              <div className="rounded-lg border p-3 bg-red-50 dark:bg-red-950">
+                <div className="text-sm font-medium text-muted-foreground">Votos Negativos</div>
+                <div className="text-2xl font-bold text-red-600 dark:text-red-400">{estadisticas.votosNegativos}</div>
+              </div>
+              <div className="rounded-lg border p-3 bg-yellow-50 dark:bg-yellow-950">
+                <div className="text-sm font-medium text-muted-foreground">Abstenciones</div>
+                <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+                  {estadisticas.abstenciones}
                 </div>
-                <div className="rounded-lg border p-3 bg-red-50 dark:bg-red-950">
-                  <div className="text-sm font-medium text-muted-foreground">Votos Negativos</div>
-                  <div className="text-2xl font-bold text-red-600 dark:text-red-400">{estadisticas.votosNegativos}</div>
-                </div>
-                <div className="rounded-lg border p-3 bg-yellow-50 dark:bg-yellow-950">
-                  <div className="text-sm font-medium text-muted-foreground">Abstenciones</div>
-                  <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
-                    {estadisticas.abstenciones}
-                  </div>
-                </div>
-                <div className="rounded-lg border p-3 bg-gray-50 dark:bg-gray-950">
-                  <div className="text-sm font-medium text-muted-foreground">Ausencias</div>
-                  <div className="text-2xl font-bold text-gray-600 dark:text-gray-400">
-                    {estadisticas.ausencias}
-                  </div>
+              </div>
+              <div className="rounded-lg border p-3 bg-gray-50 dark:bg-gray-950">
+                <div className="text-sm font-medium text-muted-foreground">Ausencias</div>
+                <div className="text-2xl font-bold text-gray-600 dark:text-gray-400">
+                  {estadisticas.ausencias}
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

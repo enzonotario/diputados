@@ -46,9 +46,6 @@ export default function ActaDetailPage() {
   if (!acta) {
     return (
       <div className="container py-10">
-        <Button variant="outline" onClick={() => router.back()} className="mb-6">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Volver
-        </Button>
         <Card>
           <CardHeader>
             <CardTitle>Acta no encontrada</CardTitle>
@@ -146,12 +143,8 @@ export default function ActaDetailPage() {
   ]
 
   return (
-    <div className="container py-10">
-      <Button variant="outline" onClick={() => router.back()} className="mb-6">
-        <ArrowLeft className="mr-2 h-4 w-4" /> Volver
-      </Button>
-
-      <Card className="mb-8">
+    <div className="container flex flex-col py-10 gap-10">
+      <Card>
         <CardHeader>
           <div className="flex justify-between items-start">
             <div>
