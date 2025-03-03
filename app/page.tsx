@@ -9,10 +9,10 @@ export default function Home() {
       <section className="flex flex-col items-center justify-center space-y-4 text-center py-10 md:py-16">
         <LandmarkIcon className="h-16 w-16 text-primary" />
         <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
-          Análisis de Diputados Argentinos
+          Votaciones de Diputados
         </h1>
         <p className="max-w-[700px] text-lg text-muted-foreground md:text-xl">
-          Explora datos sobre los diputados de Argentina, sus votaciones, asistencia y más.
+          Explora y analiza las votaciones de los proyectos de ley en la Cámara de Diputados de la Nación Argentina.
         </p>
         <div className="flex flex-col sm:flex-row gap-4">
           <Button asChild size="lg">
