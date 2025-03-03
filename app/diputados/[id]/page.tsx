@@ -9,8 +9,7 @@ import { DataTable } from "@/components/data-table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Loader2, ArrowLeft, CheckCircle, XCircle, MinusCircle, AlertCircle } from "lucide-react"
+import { Loader2,  CheckCircle, XCircle, MinusCircle, AlertCircle } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 
 export default function DiputadoDetailPage() {
@@ -92,7 +91,7 @@ export default function DiputadoDetailPage() {
 
         switch (voto.tipoVoto.toLowerCase()) {
           case "afirmativo":
-            return <CheckCircle className="h-5 w-5 text-green-500" />
+            return <CheckCircle className="h-5 w-5 text-teal-500" />
           case "negativo":
             return <XCircle className="h-5 w-5 text-red-500" />
           case "abstencion":
@@ -122,7 +121,7 @@ export default function DiputadoDetailPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               <div>
                 <h3 className="text-sm font-medium text-muted-foreground">Bloque</h3>
                 <p>{diputado.bloque}</p>
@@ -140,42 +139,48 @@ export default function DiputadoDetailPage() {
                 <p>{formatDate(diputado.juramentoFecha)}</p>
               </div>
             </div>
-          </div>
 
-          <div className="space-y-6">
-            <div>
-              <div className="flex justify-between mb-2">
-                <span className="text-sm font-medium">Presentismo</span>
-                <span className="text-sm font-medium">{estadisticas.presentismo}%</span>
-              </div>
-              <Progress value={estadisticas.presentismo} className="h-2" />
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="rounded-lg border p-3">
-                <div className="text-sm font-medium text-muted-foreground">Total Votaciones</div>
-                <div className="text-2xl font-bold">{estadisticas.totalVotaciones}</div>
-              </div>
-              <div className="rounded-lg border p-3 bg-green-50 dark:bg-green-950">
-                <div className="text-sm font-medium text-muted-foreground">Votos Afirmativos</div>
-                <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                  {estadisticas.votosAfirmativos}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div className="rounded-lg border p-3 bg-teal-50 dark:bg-teal-950">
+                  <div className="text-3xl font-bold text-teal-600 dark:text-teal-400">
+                    {estadisticas.votosAfirmativos}
+                  </div>
+                  <div className="text-sm font-medium text-muted-foreground">Votos Afirmativos</div>
+                </div>
+                <div className="rounded-lg border p-3 bg-red-50 dark:bg-red-950">
+                  <div className="text-3xl font-bold text-red-600 dark:text-red-400">{estadisticas.votosNegativos}</div>
+                  <div className="text-sm font-medium text-muted-foreground">Votos Negativos</div>
+                </div>
+                <div className="rounded-lg border p-3 bg-yellow-50 dark:bg-yellow-950">
+                  <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
+                    {estadisticas.abstenciones}
+                  </div>
+                  <div className="text-sm font-medium text-muted-foreground">Abstenciones</div>
                 </div>
               </div>
-              <div className="rounded-lg border p-3 bg-red-50 dark:bg-red-950">
-                <div className="text-sm font-medium text-muted-foreground">Votos Negativos</div>
-                <div className="text-2xl font-bold text-red-600 dark:text-red-400">{estadisticas.votosNegativos}</div>
-              </div>
-              <div className="rounded-lg border p-3 bg-yellow-50 dark:bg-yellow-950">
-                <div className="text-sm font-medium text-muted-foreground">Abstenciones</div>
-                <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
-                  {estadisticas.abstenciones}
+
+              <div className="grid grid-cols-1 gap-4">
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="rounded-lg border p-3">
+                    <div className="text-sm font-medium text-muted-foreground">Total Votaciones</div>
+                    <div className="text-2xl font-bold">{estadisticas.totalVotaciones}</div>
+                  </div>
+
+                  <div className="rounded-lg border p-3 bg-gray-50 dark:bg-gray-950">
+                    <div className="text-sm font-medium text-muted-foreground">Ausencias</div>
+                    <div className="text-2xl font-bold text-gray-600 dark:text-gray-400">
+                      {estadisticas.ausencias}
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="rounded-lg border p-3 bg-gray-50 dark:bg-gray-950">
-                <div className="text-sm font-medium text-muted-foreground">Ausencias</div>
-                <div className="text-2xl font-bold text-gray-600 dark:text-gray-400">
-                  {estadisticas.ausencias}
+
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm font-medium">Presentismo</span>
+                    <span className="text-sm font-medium">{estadisticas.presentismo}%</span>
+                  </div>
+                  <Progress value={estadisticas.presentismo} className="h-2" />
                 </div>
               </div>
             </div>
