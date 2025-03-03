@@ -2,10 +2,10 @@ import HomePageContent from "@/app/HomePageContent";
 import {Metadata} from "next";
 
 export const metadata: Metadata = {
-  title: "diputados.argentinadatos.com",
+  title: "Votaciones de Diputados | diputados.argentinadatos.com",
   description: "Explora y analiza las votaciones de los proyectos de ley en la Cámara de Diputados de la Nación Argentina.",
   openGraph: {
-    title: "diputados.argentinadatos.com",
+    title: "Votaciones de Diputados | diputados.argentinadatos.com",
     description: "Explora y analiza las votaciones de los proyectos de ley en la Cámara de Diputados de la Nación Argentina.",
     images: [{
       url: '/og.png',
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "diputados.argentinadatos.com",
+    title: "Votaciones de Diputados | diputados.argentinadatos.com",
     description: "Explora y analiza las votaciones de los proyectos de ley en la Cámara de Diputados de la Nación Argentina.",
     images: ['/og.png']
   }
