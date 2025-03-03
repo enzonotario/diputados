@@ -6,7 +6,7 @@ import { RecentVotings } from "@/components/recent-votings"
 export default function Home() {
   return (
     <div className="container py-10">
-      <section className="flex flex-col items-center justify-center space-y-4 text-center py-10 md:py-16">
+      <section className="flex flex-col items-center justify-center space-y-4 text-center py-10">
         <LandmarkIcon className="h-16 w-16 text-primary" />
         <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
           Votaciones de Diputados
