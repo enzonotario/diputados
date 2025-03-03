@@ -1,15 +1,16 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { getActas } from "@/lib/api"
-import type { Acta, SortConfig, FilterConfig } from "@/lib/types"
-import { sortActas, filterActas, formatDate, getYearsFromActas, getUniqueValues } from "@/lib/utils"
-import { DataTable } from "@/components/data-table"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { Loader2 } from "lucide-react"
+import {useEffect, useState} from "react"
+import {useRouter} from "next/navigation"
+import {getActas} from "@/lib/api"
+import type {Acta, FilterConfig, SortConfig} from "@/lib/types"
+import {filterActas, formatDate, getUniqueValues, getYearsFromActas, sortActas} from "@/lib/utils"
+import {DataTable} from "@/components/data-table"
+import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs"
+import {Badge} from "@/components/ui/badge"
+import {Loader2, Scroll} from "lucide-react"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
 
 export default function ActasPage() {
   const router = useRouter()
@@ -113,13 +114,18 @@ export default function ActasPage() {
       <h1 className="text-3xl font-bold mb-6">Actas de Votación</h1>
 
       <Tabs value={selectedYear || "todos"} onValueChange={handleYearChange} className="mb-6">
-        <TabsList className="flex flex-wrap">
-          <TabsTrigger value="todos">Todos los años</TabsTrigger>
-          {years.map((year) => (
-            <TabsTrigger key={year} value={year}>
-              {year}
-            </TabsTrigger>
-          ))}
+        <TabsList className="w-full">
+          <ScrollArea >
+            <div className="flex">
+              <TabsTrigger value="todos">Todos los años</TabsTrigger>
+              {years.map((year) => (
+                <TabsTrigger key={year} value={year}>
+                  {year}
+                </TabsTrigger>
+              ))}
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
         </TabsList>
       </Tabs>
 

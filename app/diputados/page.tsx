@@ -1,23 +1,23 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import {useEffect, useState} from "react"
+import {useRouter} from "next/navigation"
 import {getActas, getDiputados} from "@/lib/api"
-import type { Diputado, SortConfig, FilterConfig } from "@/lib/types"
+import type {Diputado, FilterConfig, SortConfig} from "@/lib/types"
 import {
-  sortDiputados,
+  calcularEstadisticasDiputado,
   filterDiputados,
   formatDate,
-  isDiputadoActivo,
   getUniqueValues,
-  calcularEstadisticasDiputado
+  isDiputadoActivo,
+  sortDiputados
 } from "@/lib/utils"
-import { DataTable } from "@/components/data-table"
-import { FilterSidebar } from "@/components/filter-sidebar"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Loader2 } from "lucide-react"
+import {DataTable} from "@/components/data-table"
+import {FilterSidebar} from "@/components/filter-sidebar"
+import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs"
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
+import {Badge} from "@/components/ui/badge"
+import {Loader2} from "lucide-react"
 
 export default function DiputadosPage() {
   const router = useRouter()

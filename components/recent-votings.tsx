@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { CheckCircle, XCircle, Calendar, ArrowRight } from "lucide-react"
+import {VotacionesProgress, VotationProgress} from "@/components/votaciones-progress";
 
 export function RecentVotings() {
   const [actas, setActas] = useState<Acta[]>([])
@@ -109,12 +110,7 @@ export function RecentVotings() {
                     </div>
                 </div>
 
-                <div className="w-full flex flex-row">
-                  <div style={{width: `${(acta.votosAfirmativos / acta.votos.length) * 100}%`}} className="h-2 bg-teal-500 dark:bg-teal-400"></div>
-                  <div style={{width: `${(acta.votosNegativos / acta.votos.length) * 100}%`}} className="h-2 bg-red-500 dark:bg-red-400"></div>
-                  <div style={{width: `${(acta.abstenciones / acta.votos.length) * 100}%`}} className="h-2 bg-yellow-400 dark:bg-yellow-400"></div>
-                  <div style={{width: `${(acta.ausentes / acta.votos.length) * 100}%`}} className="h-2 bg-gray-500 dark:bg-gray-400"></div>
-                </div>
+                <VotacionesProgress acta={acta} />
               </Card>
             </Link>
           ))}

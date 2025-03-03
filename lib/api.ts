@@ -1,4 +1,5 @@
 import type { Diputado, Acta } from "@/lib/types"
+import { collect } from "collect.js"
 
 const API_BASE_URL = "https://api.argentinadatos.com/v1/diputados"
 
@@ -8,7 +9,13 @@ export async function getDiputados(): Promise<Diputado[]> {
     if (!response.ok) {
       throw new Error(`Error fetching diputados: ${response.statusText}`)
     }
-    return await response.json()
+    return collect(await response.json())
+        .sortBy("id")
+        .sortByDesc("periodoMandato.inicio")
+        .sortByDesc("periodoBloque.inicio")
+        .groupBy("id")
+        .map((diputados) => diputados.first())
+        .toArray() as Diputado[]
   } catch (error) {
     console.error("Error fetching diputados:", error)
     return []

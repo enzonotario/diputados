@@ -1,7 +1,7 @@
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { LandmarkIcon } from "lucide-react"
-import { RecentVotings } from "@/components/recent-votings"
+import {Button} from "@/components/ui/button"
+import {LandmarkIcon} from "lucide-react"
+import {RecentVotings} from "@/components/recent-votings"
 
 export default function Home() {
   return (

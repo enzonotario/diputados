@@ -20,8 +20,9 @@ export function formatDate(dateString: string): string {
 export function isDiputadoActivo(diputado: Diputado): boolean {
   const now = new Date()
   const finMandato = new Date(diputado.periodoMandato.fin)
+  const ceseFecha = new Date(diputado.ceseFecha)
 
-  return finMandato > now
+  return finMandato > now && ceseFecha > now
 }
 
 export function sortDiputados(diputados: Diputado[], sortConfig: SortConfig): Diputado[] {
@@ -172,13 +173,13 @@ export function calcularEstadisticasDiputado(diputado: Diputado, actas: Acta[]) 
   let ausencias = 0
 
   actas.forEach((acta) => {
-    totalVotaciones++
-
     const voto = acta.votos.find((v) => v.diputado === `${diputado.apellido}, ${diputado.nombre}`)
 
     if (!voto) {
       return
     }
+
+    totalVotaciones++
 
     switch (voto.tipoVoto.toLowerCase()) {
       case "afirmativo":

@@ -9,7 +9,9 @@ import {DataTable} from "@/components/data-table"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {Badge} from "@/components/ui/badge"
-import {AlertCircle, CheckCircle, Loader2, MinusCircle, User, XCircle} from "lucide-react" // Íconos de ejemplo, ajusta según tu librería
+import {AlertCircle, CheckCircle, Loader2, MinusCircle, User, XCircle} from "lucide-react"
+import {Progress} from "@/components/ui/progress";
+import {VotacionesProgress} from "@/components/votaciones-progress";
 
 export default function ActaDetailPage() {
   const params = useParams()
@@ -54,7 +56,6 @@ export default function ActaDetailPage() {
     )
   }
 
-  // Preparar datos para la tabla de votos
   const votosConDiputados = acta.votos.map((voto) => {
     const diputado = diputados.find((d) => `${d.apellido}, ${d.nombre}` === voto.diputado)
     return {
@@ -67,15 +68,14 @@ export default function ActaDetailPage() {
     }
   })
 
-  // Calcular porcentajes para la visualización
   const total = acta.votosAfirmativos + acta.votosNegativos + acta.abstenciones + acta.ausentes
-  const presentes = acta.presentes || acta.votos.filter(v => v.tipoVoto !== "ausente").length
-  const ausentes = acta.ausentes || acta.votos.filter(v => v.tipoVoto === "ausente").length
+  const presentes = acta.votosAfirmativos + acta.votosNegativos + acta.abstenciones
+  const ausentes = acta.ausentes
+  const presentismo = ((presentes / total) * 100).toFixed(0)
   const votosAfirmativos = acta.votosAfirmativos || 0
   const votosNegativos = acta.votosNegativos || 0
   const abstenciones = acta.abstenciones || 0
 
-  // Columnas para la tabla de votos
   const columnasVotos = [
     {
       key: "foto",
@@ -148,31 +148,6 @@ export default function ActaDetailPage() {
           <div className="flex justify-between items-start">
             <div>
               <CardTitle className="text-2xl">{acta.titulo}</CardTitle>
-              <CardDescription>
-                <div className="flex flex-row flex-wrap gap-4">
-                  <div className="flex gap-2">
-                    <span>Acta N°:</span>
-                    <span className="font-medium">{acta.numeroActa}</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <span>Fecha:</span>
-                    <span className="font-medium">{formatDate(acta.fecha)}</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <span>Período:</span>
-                    <span className="font-medium">{acta.periodo}</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <span>Reunión:</span>
-                    <span className="font-medium">{acta.reunion}</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <span>Presidente:</span>
-                    <span className="font-medium">{acta.presidente}</span>
-                  </div>
-                </div>
-
-              </CardDescription>
             </div>
             <Badge variant={acta.resultado === "afirmativo" ? "teal" : "red"} className="text-base py-1 px-3">
               {acta.resultado}
@@ -180,75 +155,123 @@ export default function ActaDetailPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <dl className="flex flex-wrap gap-3 sm:gap-6">
+            <div className="flex flex-col">
+              <dt className="text-sm font-medium text-muted-foreground">Acta N°</dt>
+              <dd>{acta.numeroActa}</dd>
+            </div>
+            <div className="flex flex-col">
+              <dt className="text-sm font-medium text-muted-foreground">Fecha</dt>
+              <dd>{formatDate(acta.fecha)}</dd>
+            </div>
+            <div className="flex flex-col">
+              <dt className="text-sm font-medium text-muted-foreground">Período</dt>
+              <dd>{acta.periodo}</dd>
+            </div>
+            <div className="flex flex-col">
+              <dt className="text-sm font-medium text-muted-foreground">Reunión</dt>
+              <dd>{acta.reunion}</dd>
+            </div>
+            <div className="flex flex-col">
+              <dt className="text-sm font-medium text-muted-foreground">Presidente</dt>
+              <dd>{acta.presidente}</dd>
+            </div>
+          </dl>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Asistencia</CardTitle>
+          </CardHeader>
+
+          <CardContent className="pb-3">
             <div className="flex-1 space-y-4">
-              <h3 className="text-lg font-medium">Asistencia</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-muted p-4 rounded-lg text-center">
-                  <span className="text-3xl font-bold text-teal-700 dark:text-teal-400">{presentes}</span>
+                  <span className="text-xl md:text-3xl font-bold text-teal-700 dark:text-teal-400">{presentes}</span>
                   <p className="text-sm text-gray-700 dark:text-gray-300">Presentes</p>
                 </div>
                 <div className="bg-muted p-4 rounded-lg text-center">
-                  <span className="text-3xl font-bold text-red-700 dark:text-red-400">{ausentes}</span>
+                  <span className="text-xl md:text-3xl font-bold text-red-700 dark:text-red-400">{ausentes}</span>
                   <p className="text-sm text-gray-700 dark:text-gray-300">Ausentes</p>
                 </div>
               </div>
+
               <div className="flex flex-wrap gap-1">
                 {[...Array(presentes)].map((_, i) => (
                     <User
                         key={`presente-${i}`}
-                        className="h-6 w-6 text-teal-500 dark:text-teal-400"
+                        className="size-4 md:size-6 text-teal-500 dark:text-teal-400"
                     />
                 ))}
                 {[...Array(ausentes)].map((_, i) => (
                     <User
                         key={`ausente-${i}`}
-                        className="h-6 w-6 text-red-500 dark:text-red-400"
+                        className="size-4 md:size-6 text-red-500 dark:text-red-400"
                     />
                 ))}
               </div>
             </div>
+          </CardContent>
 
+          <div>
+            <div className="flex justify-center gap-2 px-2 pb-2">
+              <span className="text-sm">Presentismo</span>
+              <span className="text-sm font-medium">{presentismo}%</span>
+            </div>
+            <Progress value={presentismo} className="h-2 rounded-t-none" />
+          </div>
+        </Card>
+
+        <Card className="flex flex-col rounded-lg overflow-hidden">
+          <CardHeader>
+            <CardTitle>Resultados</CardTitle>
+          </CardHeader>
+          <CardContent className="pb-3">
             <div className="flex-1 space-y-4">
-              <h3 className="text-lg font-medium">Resultados</h3>
               <div className="grid grid-cols-3 gap-4">
                 <div className="bg-muted p-4 rounded-lg text-center">
-                  <span className="text-3xl font-bold text-teal-700 dark:text-teal-400">{votosAfirmativos}</span>
+                  <span className="text-xl md:text-3xl font-bold text-teal-700 dark:text-teal-400">{votosAfirmativos}</span>
                   <p className="text-sm text-gray-500">Afirmativos</p>
                 </div>
                 <div className="bg-muted p-4 rounded-lg text-center">
-                  <span className="text-3xl font-bold text-red-700 dark:text-red-400">{votosNegativos}</span>
+                  <span className="text-xl md:text-3xl font-bold text-red-700 dark:text-red-400">{votosNegativos}</span>
                   <p className="text-sm text-gray-500">Negativos</p>
                 </div>
                 <div className="bg-muted p-4 rounded-lg text-center">
-                  <span className="text-3xl font-bold text-orange-700 dark:text-orange-400">{abstenciones}</span>
+                  <span className="text-xl md:text-3xl font-bold text-orange-700 dark:text-orange-400">{abstenciones}</span>
                   <p className="text-sm text-gray-500">Abstenciones</p>
                 </div>
               </div>
+
               <div className="flex flex-wrap gap-1">
                 {[...Array(votosAfirmativos)].map((_, i) => (
                     <CheckCircle
                         key={`afirmativo-${i}`}
-                        className="h-6 w-6 text-teal-500 dark:text-teal-400"
+                        className="size-4 md:size-6 text-teal-500 dark:text-teal-400"
                     />
                 ))}
                 {[...Array(votosNegativos)].map((_, i) => (
                     <XCircle
                         key={`negativo-${i}`}
-                        className="h-6 w-6 text-red-500 dark:text-red-400"
+                        className="size-4 md:size-6 text-red-500 dark:text-red-400"
                     />
                 ))}
                 {[...Array(abstenciones)].map((_, i) => (
                     <MinusCircle
                         key={`abstencion-${i}`}
-                        className="h-6 w-6 text-orange-500 dark:text-orange-400"
+                        className="size-4 md:size-6 text-orange-500 dark:text-orange-400"
                     />
                 ))}
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+          <div className="flex-1"></div>
+          <VotacionesProgress acta={acta} />
+        </Card>
+      </div>
 
       <Card>
         <CardHeader>

@@ -1,16 +1,16 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useParams, useRouter } from "next/navigation"
-import { getDiputadoById, getActas } from "@/lib/api"
-import type { Diputado, Acta } from "@/lib/types"
-import { formatDate, calcularEstadisticasDiputado } from "@/lib/utils"
-import { DataTable } from "@/components/data-table"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Loader2,  CheckCircle, XCircle, MinusCircle, AlertCircle } from "lucide-react"
-import { Progress } from "@/components/ui/progress"
+import {useEffect, useState} from "react"
+import {useParams, useRouter} from "next/navigation"
+import {getActas, getDiputadoById} from "@/lib/api"
+import type {Acta, Diputado} from "@/lib/types"
+import {calcularEstadisticasDiputado, formatDate} from "@/lib/utils"
+import {DataTable} from "@/components/data-table"
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
+import {Badge} from "@/components/ui/badge"
+import {AlertCircle, CheckCircle, Loader2, MinusCircle, XCircle} from "lucide-react"
+import {Progress} from "@/components/ui/progress"
 
 export default function DiputadoDetailPage() {
   const params = useParams()
@@ -121,24 +121,28 @@ export default function DiputadoDetailPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Bloque</h3>
-                <p>{diputado.bloque}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Género</h3>
-                <p>{diputado.genero}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Período de Mandato</h3>
-                <p>{`${formatDate(diputado.periodoMandato.inicio)} - ${formatDate(diputado.periodoMandato.fin)}`}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Fecha de Juramento</h3>
-                <p>{formatDate(diputado.juramentoFecha)}</p>
-              </div>
-            </div>
+            <dl className="flex flex-wrap gap-3 sm:gap-6">
+                <div className="flex flex-col">
+                    <dt className="text-sm font-medium text-muted-foreground">Bloque</dt>
+                    <dd>{diputado.bloque}</dd>
+                </div>
+                <div className="flex flex-col">
+                    <dt className="text-sm font-medium text-muted-foreground">Género</dt>
+                    <dd>{diputado.genero}</dd>
+                </div>
+                <div className="flex flex-col">
+                    <dt className="text-sm font-medium text-muted-foreground">Período de Mandato</dt>
+                    <dd>{`${formatDate(diputado.periodoMandato.inicio)} - ${formatDate(diputado.periodoMandato.fin)}`}</dd>
+                </div>
+                <div className="flex flex-col">
+                    <dt className="text-sm font-medium text-muted-foreground">Fecha de Juramento</dt>
+                    <dd>{formatDate(diputado.juramentoFecha)}</dd>
+                </div>
+                <div className="flex flex-col">
+                    <dt className="text-sm font-medium text-muted-foreground">Fecha de Cese</dt>
+                    <dd>{formatDate(diputado.ceseFecha)}</dd>
+                </div>
+            </dl>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <div className="grid sm:grid-cols-3 gap-4">
