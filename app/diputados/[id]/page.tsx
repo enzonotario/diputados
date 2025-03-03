@@ -123,12 +123,15 @@ export default function DiputadoDetailPage() {
           </Avatar>
           <div>
             <CardTitle>{`${diputado.nombre} ${diputado.apellido}`}</CardTitle>
-            <CardDescription>{diputado.provincia}</CardDescription>
           </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4">
             <dl className="flex flex-wrap gap-3 sm:gap-6">
+                <div className="flex flex-col">
+                  <dt className="text-sm font-medium text-muted-foreground">Provincia</dt>
+                  <dd>{diputado.provincia}</dd>
+                </div>
                 <div className="flex flex-col">
                     <dt className="text-sm font-medium text-muted-foreground">Bloque</dt>
                     <dd>{diputado.bloque}</dd>
@@ -202,7 +205,6 @@ export default function DiputadoDetailPage() {
       <Card>
         <CardHeader>
           <CardTitle>Historial de Votaciones</CardTitle>
-          <CardDescription>Registro de votaciones en las que ha participado el diputado</CardDescription>
         </CardHeader>
         <CardContent>
           <DataTable

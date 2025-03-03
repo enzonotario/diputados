@@ -283,7 +283,6 @@ export default function ActaDetailPage() {
       <Card>
         <CardHeader>
           <CardTitle>Votos de los Diputados</CardTitle>
-          <CardDescription>Registro de votos emitidos por cada diputado</CardDescription>
         </CardHeader>
         <CardContent>
           <DataTable
