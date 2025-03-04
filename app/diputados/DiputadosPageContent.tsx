@@ -2,6 +2,7 @@
 
 import {useEffect, useState} from "react"
 import {useRouter} from "next/navigation"
+import { useQueryState } from 'nuqs'
 import {getActas, getDiputados} from "@/lib/api"
 import type {Diputado, FilterConfig, SortConfig} from "@/lib/types"
 import {
@@ -21,11 +22,15 @@ import {Loader2} from "lucide-react"
 
 export default function DiputadosPageContent() {
   const router = useRouter()
+  const [sortKey, setSortKey] = useQueryState('sort', { defaultValue: 'estadisticas.presentismo' })
+  const [sortDir, setSortDir] = useQueryState('dir', { defaultValue: 'desc' })
+  const [activeTabState, setActiveTabState] = useQueryState('tab', { defaultValue: 'activos' })
+  const [provinciaFilter, setProvinciaFilter] = useQueryState('provincia', { defaultValue: '' })
+  const [bloqueFilter, setBloqueFilter] = useQueryState('bloque', { defaultValue: '' })
+  const [generoFilter, setGeneroFilter] = useQueryState('genero', { defaultValue: '' })
+  const [searchQuery, setSearchQuery] = useQueryState('q', { defaultValue: '' })
   const [diputados, setDiputados] = useState<Diputado[]>([])
   const [loading, setLoading] = useState(true)
-  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: "estadisticas.presentismo", direction: "desc" })
-  const [filters, setFilters] = useState<FilterConfig>({})
-  const [activeTab, setActiveTab] = useState<string>("activos")
 
   useEffect(() => {
     async function fetchData() {
@@ -48,12 +53,26 @@ export default function DiputadosPageContent() {
     fetchData()
   }, [])
 
+  const sortConfig: SortConfig = { key: sortKey, direction: sortDir as "asc" | "desc" }
+  const filters: FilterConfig = {
+    ...(provinciaFilter && provinciaFilter !== "all" ? { provincia: provinciaFilter } : {}),
+    ...(bloqueFilter && bloqueFilter !== "all" ? { bloque: bloqueFilter } : {}),
+    ...(generoFilter && generoFilter !== "all" ? { genero: generoFilter } : {})
+  }
+
   const handleSort = (key: string, direction: "asc" | "desc") => {
-    setSortConfig({ key, direction })
+    setSortKey(key)
+    setSortDir(direction)
   }
 
   const handleFilterChange = (newFilters: FilterConfig) => {
-    setFilters(newFilters)
+    if (newFilters.provincia !== undefined) setProvinciaFilter(newFilters.provincia as string || '')
+    if (newFilters.bloque !== undefined) setBloqueFilter(newFilters.bloque as string || '')
+    if (newFilters.genero !== undefined) setGeneroFilter(newFilters.genero as string || '')
+  }
+  
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value)
   }
 
   const filteredDiputados = filterDiputados(diputados, filters)
@@ -63,8 +82,8 @@ export default function DiputadosPageContent() {
 
   const sortedActiveDiputados = sortDiputados(activeDiputados, sortConfig)
   const sortedInactiveDiputados = sortDiputados(inactiveDiputados, sortConfig)
-
-  const displayedDiputados = activeTab === "activos" ? sortedActiveDiputados : sortedInactiveDiputados
+  
+  const displayedDiputados = activeTabState === "activos" ? sortedActiveDiputados : sortedInactiveDiputados
 
   // Obtener valores únicos para los filtros
   const provincias = getUniqueValues(diputados, "provincia")
@@ -142,7 +161,7 @@ export default function DiputadosPageContent() {
         </div>
 
         <div className="md:col-span-3">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+          <Tabs value={activeTabState} onValueChange={setActiveTabState} className="mb-6">
             <TabsList>
               <TabsTrigger value="activos">Diputados Activos ({activeDiputados.length})</TabsTrigger>
               <TabsTrigger value="inactivos">Diputados Inactivos ({inactiveDiputados.length})</TabsTrigger>
@@ -159,10 +178,11 @@ export default function DiputadosPageContent() {
               columns={columns}
               sortConfig={sortConfig}
               onSort={handleSort}
+              onSearchChange={handleSearchChange}
               searchable
               searchKeys={["nombre", "apellido", "provincia", "bloque"]}
               onRowClick={(diputado) => router.push(`/diputados/${diputado.id}`)}
-              emptyMessage={`No se encontraron diputados ${activeTab === "activos" ? "activos" : "inactivos"} con los filtros aplicados.`}
+              emptyMessage={`No se encontraron diputados ${activeTabState === "activos" ? "activos" : "inactivos"} con los filtros aplicados.`}
             />
           )}
         </div>
@@ -170,4 +190,3 @@ export default function DiputadosPageContent() {
     </div>
   )
 }
-

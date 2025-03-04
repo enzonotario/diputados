@@ -2,6 +2,7 @@
 
 import {useEffect, useState} from "react"
 import {useRouter} from "next/navigation"
+import { useQueryState } from 'nuqs'
 import {getActas} from "@/lib/api"
 import type {Acta, FilterConfig, SortConfig} from "@/lib/types"
 import {filterActas, formatDate, getUniqueValues, getYearsFromActas, sortActas} from "@/lib/utils"
@@ -14,11 +15,13 @@ import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
 
 export default function ActasPageContent() {
   const router = useRouter()
+  const [sortKey, setSortKey] = useQueryState('sort', { defaultValue: 'fecha' })
+  const [sortDir, setSortDir] = useQueryState('dir', { defaultValue: 'desc' })
+  const [yearFilter, setYearFilter] = useQueryState('year', { defaultValue: '' })
+  const [resultadoFilter, setResultadoFilter] = useQueryState('resultado', { defaultValue: 'all' })
+  const [searchQuery, setSearchQuery] = useQueryState('q', { defaultValue: '' })
   const [actas, setActas] = useState<Acta[]>([])
   const [loading, setLoading] = useState(true)
-  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: "fecha", direction: "desc" })
-  const [filters, setFilters] = useState<FilterConfig>({})
-  const [selectedYear, setSelectedYear] = useState<string>("")
 
   useEffect(() => {
     async function fetchData() {
@@ -30,34 +33,32 @@ export default function ActasPageContent() {
     fetchData()
   }, [])
 
-  const handleSort = (key: string, direction: "asc" | "desc") => {
-    setSortConfig({ key, direction })
+  const sortConfig: SortConfig = { key: sortKey, direction: sortDir as "asc" | "desc" }
+  const filters: FilterConfig = {
+    ...(yearFilter && yearFilter !== "todos" ? {
+      fechaStart: `${yearFilter}-01-01`,
+      fechaEnd: `${yearFilter}-12-31`
+    } : {}),
+    ...(resultadoFilter && resultadoFilter !== "all" ? { resultado: resultadoFilter } : {}),
+    ...(searchQuery ? { titulo: searchQuery, resultado: searchQuery } : {})
   }
 
-  const handleFilterChange = (newFilters: FilterConfig) => {
-    if (selectedYear && selectedYear !== "todos") {
-      const { fechaStart, fechaEnd, ...restFilters } = newFilters
-      setFilters({
-        ...restFilters,
-        fechaStart: selectedYear ? `${selectedYear}-01-01` : null,
-        fechaEnd: selectedYear ? `${selectedYear}-12-31` : null,
-      })
-    } else {
-      setFilters(newFilters)
-    }
+  const handleSort = (key: string, direction: "asc" | "desc") => {
+    setSortKey(key)
+    setSortDir(direction)
+  }
+
+  const handleResultadoChange = (value: string) => {
+    setResultadoFilter(value)
   }
 
   const handleYearChange = (year: string) => {
-    setSelectedYear(year)
-    if (year && year !== "todos") {
-      const yearStart = `${year}-01-01`
-      const yearEnd = `${year}-12-31`
-      setFilters((prev) => {
-        return { ...prev, fechaStart: yearStart, fechaEnd: yearEnd }
-      })
-    } else {
-      const { fechaStart, fechaEnd, ...restFilters } = filters
-      setFilters(restFilters)
+    setYearFilter(year)
+  }
+
+  const handleSearchChange = (value: string) => {
+    if (value !== searchQuery) {
+      setSearchQuery(value)
     }
   }
 
@@ -112,8 +113,7 @@ export default function ActasPageContent() {
   return (
     <div className="container py-10">
       <h1 className="text-3xl font-bold mb-6">Actas de Votación</h1>
-
-      <Tabs value={selectedYear || "todos"} onValueChange={handleYearChange} className="mb-6">
+      <Tabs value={yearFilter || "todos"} onValueChange={handleYearChange} className="mb-6">
         <TabsList className="w-full">
           <ScrollArea >
             <div className="flex">
@@ -141,6 +141,7 @@ export default function ActasPageContent() {
               columns={columns}
               sortConfig={sortConfig}
               onSort={handleSort}
+              onSearchChange={handleSearchChange}
               searchable
               searchKeys={["titulo", "resultado"]}
               onRowClick={(acta) => router.push(`/actas/${acta.id}`)}
@@ -148,8 +149,8 @@ export default function ActasPageContent() {
               additionalFilters={(
                 <div className="flex px-2 gap-2">
                   <Select
-                    value={filters.resultado || 'all'}
-                    onValueChange={(value) => handleFilterChange({ ...filters, resultado: value })}
+                    value={resultadoFilter}
+                    onValueChange={handleResultadoChange}
                   >
                     <SelectTrigger id="resultado">
                       <SelectValue placeholder="Seleccionar resultado" />
@@ -172,4 +173,3 @@ export default function ActasPageContent() {
     </div>
   )
 }
-

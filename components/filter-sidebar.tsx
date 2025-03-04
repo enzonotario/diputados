@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -24,6 +24,10 @@ interface FilterSidebarProps {
 
 export function FilterSidebar({ filters, onFilterChange, filterOptions, onReset }: FilterSidebarProps) {
   const [localFilters, setLocalFilters] = useState<FilterConfig>(filters)
+
+  useEffect(() => {
+    setLocalFilters(filters)
+  }, [filters])
 
   const handleFilterChange = (key: string, value: string | number | boolean | null) => {
     const updatedFilters = { ...localFilters, [key]: value }
@@ -73,7 +77,7 @@ export function FilterSidebar({ filters, onFilterChange, filterOptions, onReset 
                   <SelectValue placeholder={`Seleccionar ${option.label.toLowerCase()}`} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem> {/* Changed default value to "all" */}
+                  <SelectItem value="all">Todos</SelectItem>
                   {option.options?.map((opt) => (
                     <SelectItem key={opt} value={opt}>
                       {opt}
@@ -88,4 +92,3 @@ export function FilterSidebar({ filters, onFilterChange, filterOptions, onReset 
     </div>
   )
 }
-

@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DataCardView } from "@/components/ui/data-card-view"
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -20,6 +20,7 @@ interface DataTableProps<T> {
   }[]
   onRowClick?: (item: T) => void
   sortConfig?: SortConfig
+  onSearchChange?: (value: string) => void
   onSort?: (key: string, direction: SortDirection) => void
   searchable?: boolean
   searchKeys?: string[]
@@ -33,6 +34,7 @@ export function DataTable<T>({
   onRowClick,
   sortConfig,
   onSort,
+  onSearchChange,
   searchable = false,
   searchKeys = [],
   emptyMessage = "No hay datos disponibles",
@@ -40,6 +42,12 @@ export function DataTable<T>({
 }: DataTableProps<T>) {
   const isMobile = useIsMobile()
   const [searchTerm, setSearchTerm] = useState("")
+
+  useEffect(() => {
+    if (onSearchChange) {
+      onSearchChange(searchTerm)
+    }
+  }, [searchTerm, onSearchChange])
 
   const filteredData =
     searchable && searchTerm
