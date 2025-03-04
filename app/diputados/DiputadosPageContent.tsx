@@ -23,7 +23,7 @@ export default function DiputadosPageContent() {
   const router = useRouter()
   const [diputados, setDiputados] = useState<Diputado[]>([])
   const [loading, setLoading] = useState(true)
-  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: "apellido", direction: "asc" })
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: "estadisticas.presentismo", direction: "desc" })
   const [filters, setFilters] = useState<FilterConfig>({})
   const [activeTab, setActiveTab] = useState<string>("activos")
 
@@ -122,13 +122,13 @@ export default function DiputadosPageContent() {
     },
     {
       key: "estadisticas.presentismo",
-        title: "Presentismo",
-        sortable: true,
-        render: (diputado: Diputado) => (
-          <Badge variant={diputado.estadisticas.presentismo > 80 ? "teal" : "red"}>
-            {diputado.estadisticas.presentismo}%
-          </Badge>
-        ),
+      title: "Presentismo",
+      sortable: true,
+      render: (diputado: Diputado) => (
+        <Badge variant={diputado.estadisticas.presentismo > 80 ? "teal" : "red"}>
+          {diputado.estadisticas.presentismo}%
+        </Badge>
+      ),
     },
   ]
 

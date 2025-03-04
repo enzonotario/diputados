@@ -1,9 +1,10 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { DataCardView } from "@/components/ui/data-card-view"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ChevronDown, ChevronUp, Search } from "lucide-react"
@@ -35,8 +36,9 @@ export function DataTable<T>({
   searchable = false,
   searchKeys = [],
   emptyMessage = "No hay datos disponibles",
-    additionalFilters
+  additionalFilters
 }: DataTableProps<T>) {
+  const isMobile = useIsMobile()
   const [searchTerm, setSearchTerm] = useState("")
 
   const filteredData =
@@ -75,8 +77,8 @@ export function DataTable<T>({
   return (
     <div className="w-full">
       {searchable && (
-        <div className="flex items-center mb-4">
-          <div className="relative w-full max-w-sm">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mb-4">
+          <div className="relative w-full sm:max-w-sm">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
@@ -91,6 +93,14 @@ export function DataTable<T>({
         </div>
       )}
 
+      {isMobile ? (
+        <DataCardView
+          data={filteredData}
+          columns={columns}
+          onCardClick={onRowClick}
+          emptyMessage={emptyMessage}
+        />
+      ) : (
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -138,7 +148,7 @@ export function DataTable<T>({
           </TableBody>
         </Table>
       </div>
+      )}
     </div>
   )
 }
-
