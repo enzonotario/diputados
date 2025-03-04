@@ -23,11 +23,8 @@ export const metadata: Metadata = {
 }
 
 export default function ActasPage() {
-
   return (
-    <div className="container py-10">
-      <ActasPageContent></ActasPageContent>
-    </div>
+    <ActasPageContent></ActasPageContent>
   )
 }
 

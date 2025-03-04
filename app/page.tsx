@@ -24,8 +24,6 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <div className="container py-10">
-      <HomePageContent />
-    </div>
+    <HomePageContent />
   )
 }

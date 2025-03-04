@@ -35,9 +35,7 @@ export default function DiputadoDetailPage({params}) {
   const {id} = params
 
   return (
-    <div className="container flex flex-col py-10 gap-10">
-      <DiputadoPageContent id={id} />
-    </div>
+    <DiputadoPageContent id={id} />
   )
 }
 
