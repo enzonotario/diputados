@@ -1,6 +1,6 @@
 # Votaciones de Diputados
 
-Este proyecto es una aplicación web que permite a los usuarios ver y evaluar las votaciones de los diputados argentinos. Utiliza la API de [ArgentinaDatos](https://argentinadatos.com) para obtener los datos de las votaciones.
+Este proyecto es una aplicación web que permite a los usuarios ver y evaluar las votaciones de los Diputados Argentinos. Utiliza la API de [ArgentinaDatos](https://argentinadatos.com) para obtener los datos de las votaciones.
 
 ## Sugerencias de mejora
 
