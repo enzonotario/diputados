@@ -11,8 +11,8 @@ import './globals.css'
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Diputados Argentina - Análisis de Datos",
-  description: "Plataforma de análisis de datos sobre Diputados de Argentina",
+  title: "Votaciones de Diputados de Argentina",
+  description: "Descubre cómo votan los diputados de la Cámara de Diputados de la Nación Argentina.",
 }
 
 export default function RootLayout({
