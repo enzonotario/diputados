@@ -209,13 +209,13 @@ export default function ActaPageContent({id}: {id: string}) {
                 {[...Array(presentes)].map((_, i) => (
                     <User
                         key={`presente-${i}`}
-                        className="size-4 md:size-6 text-teal-500 dark:text-teal-400"
+                        className="size-3 md:size-4 text-teal-500 dark:text-teal-400"
                     />
                 ))}
                 {[...Array(ausentes)].map((_, i) => (
                     <User
                         key={`ausente-${i}`}
-                        className="size-4 md:size-6 text-red-500 dark:text-red-400"
+                        className="size-3 md:size-4 text-red-500 dark:text-red-400"
                     />
                 ))}
               </div>
@@ -256,19 +256,19 @@ export default function ActaPageContent({id}: {id: string}) {
                 {[...Array(votosAfirmativos)].map((_, i) => (
                     <CheckCircle
                         key={`afirmativo-${i}`}
-                        className="size-4 md:size-6 text-teal-500 dark:text-teal-400"
+                        className="size-3 md:size-4 text-teal-500 dark:text-teal-400"
                     />
                 ))}
                 {[...Array(votosNegativos)].map((_, i) => (
                     <XCircle
                         key={`negativo-${i}`}
-                        className="size-4 md:size-6 text-red-500 dark:text-red-400"
+                        className="size-3 md:size-4 text-red-500 dark:text-red-400"
                     />
                 ))}
                 {[...Array(abstenciones)].map((_, i) => (
                     <MinusCircle
                         key={`abstencion-${i}`}
-                        className="size-4 md:size-6 text-orange-500 dark:text-orange-400"
+                        className="size-3 md:size-4 text-orange-500 dark:text-orange-400"
                     />
                 ))}
               </div>
