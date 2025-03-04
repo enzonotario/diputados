@@ -97,13 +97,26 @@ export default function DiputadoPageContent({id}: {id: string}) {
 
         switch (voto.tipoVoto.toLowerCase()) {
           case "afirmativo":
-            return <CheckCircle className="h-5 w-5 text-teal-500" />
+            return <div className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-teal-500" />
+              <span className="text-sm font-medium text-teal-800 dark:text-teal-200">Afirmativo</span>
+            </div>
           case "negativo":
-            return <XCircle className="h-5 w-5 text-red-500" />
+            return <div className="flex items-center gap-2">
+              <XCircle className="h-5 w-5 text-red-500" />
+              <span className="text-sm font-medium text-red-800 dark:text-red-200">Negativo</span>
+            </div>
           case "abstencion":
-            return <MinusCircle className="h-5 w-5 text-yellow-500" />
+            return <div className="flex items-center gap-2">
+              <MinusCircle className="h-5 w-5 text-yellow-500" />
+              <span className="text-sm font-medium text-yellow-800 dark:text-yellow-200">Abstención</span>
+            </div>
+
           default:
-            return <AlertCircle className="h-5 w-5 text-muted-foreground" />
+            return <div className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-muted-foreground" />
+              <span className="text-sm font-medium text-muted-foreground">Ausente</span>
+            </div>
         }
       },
     },

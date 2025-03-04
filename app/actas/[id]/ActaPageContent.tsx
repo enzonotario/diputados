@@ -116,30 +116,37 @@ export default function ActaPageContent({id}: {id: string}) {
         switch (voto.tipoVoto.toLowerCase()) {
           case "afirmativo":
             return (
-              <div className="flex items-center">
-                <CheckCircle className="h-5 w-5 text-teal-500 mr-2" />
-                <span>Afirmativo</span>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="h-5 w-5 text-teal-500" />
+                <span className="text-sm font-medium text-teal-800 dark:text-teal-200">Afirmativo</span>
               </div>
             )
           case "negativo":
             return (
-              <div className="flex items-center">
-                <XCircle className="h-5 w-5 text-red-500 mr-2" />
-                <span>Negativo</span>
+              <div className="flex items-center gap-2">
+                <XCircle className="h-5 w-5 text-red-500" />
+                <span className="text-sm font-medium text-red-800 dark:text-red-200">Negativo</span>
               </div>
             )
           case "abstencion":
             return (
-              <div className="flex items-center">
-                <MinusCircle className="h-5 w-5 text-yellow-500 mr-2" />
-                <span>Abstención</span>
+              <div className="flex items-center gap-2">
+                <MinusCircle className="h-5 w-5 text-yellow-500" />
+                <span className="text-sm font-medium text-yellow-800 dark:text-yellow-200">Abstención</span>
+              </div>
+            )
+          case "ausente":
+            return (
+              <div className="flex items-center gap-2">
+                <AlertCircle className="h-5 w-5 text-muted-foreground" />
+                <span className="text-sm font-medium text-muted-foreground">Ausente</span>
               </div>
             )
           default:
             return (
-              <div className="flex items-center">
-                <AlertCircle className="h-5 w-5 text-muted-foreground mr-2" />
-                <span>{voto.tipoVoto}</span>
+              <div className="flex items-center gap-2">
+                <AlertCircle className="h-5 w-5 text-muted-foreground" />
+                <span className="text-sm font-medium text-muted-foreground">{voto.tipoVoto}</span>
               </div>
             )
         }
