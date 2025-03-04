@@ -70,7 +70,7 @@ export default function DiputadosPageContent() {
     if (newFilters.bloque !== undefined) setBloqueFilter(newFilters.bloque as string || '')
     if (newFilters.genero !== undefined) setGeneroFilter(newFilters.genero as string || '')
   }
-  
+
   const handleSearchChange = (value: string) => {
     setSearchQuery(value)
   }
@@ -82,7 +82,7 @@ export default function DiputadosPageContent() {
 
   const sortedActiveDiputados = sortDiputados(activeDiputados, sortConfig)
   const sortedInactiveDiputados = sortDiputados(inactiveDiputados, sortConfig)
-  
+
   const displayedDiputados = activeTabState === "activos" ? sortedActiveDiputados : sortedInactiveDiputados
 
   // Obtener valores únicos para los filtros

@@ -2,12 +2,14 @@ import Link from "next/link"
 import {Button} from "@/components/ui/button"
 import {LandmarkIcon} from "lucide-react"
 import {RecentVotings} from "@/components/recent-votings"
+import {DiputadosChart} from "@/components/diputados-chart"
+import {Separator} from "@/components/ui/separator";
 
 export default function HomePageContent() {
   return (
     <div className="container py-10">
-      <section className="flex flex-col items-center justify-center space-y-4 text-center py-10">
-        <LandmarkIcon className="h-16 w-16 text-primary" />
+      <section className="flex flex-col items-center justify-center space-y-4 text-center">
+        <LandmarkIcon className="h-16 w-16 text-primary"/>
         <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
           Votaciones de Diputados
         </h1>
@@ -24,7 +26,17 @@ export default function HomePageContent() {
         </div>
       </section>
 
-      <RecentVotings />
+      <Separator className="my-20"/>
+
+      <section>
+        <DiputadosChart/>
+      </section>
+
+      <Separator className="my-20"/>
+
+      <section>
+        <RecentVotings/>
+      </section>
     </div>
   )
 }
