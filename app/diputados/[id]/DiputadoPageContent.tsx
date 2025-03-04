@@ -112,46 +112,47 @@ export default function DiputadoPageContent({id}: {id: string}) {
   return (
     <div className="container flex flex-col py-10 gap-10">
       <Card>
-        <CardHeader className="flex flex-row items-center gap-4">
-          <Avatar className="h-20 w-20">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center gap-4">
+          <Avatar className="size-32">
             <AvatarImage
-              src={diputado.foto || "/placeholder.svg?height=80&width=80"}
+              src={diputado.foto || "/placeholder.svg?height=120&width=120"}
               alt={`${diputado.nombre} ${diputado.apellido}`}
             />
             <AvatarFallback className="text-2xl">{`${diputado.nombre.charAt(0)}${diputado.apellido.charAt(0)}`}</AvatarFallback>
           </Avatar>
-          <div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <CardTitle>{`${diputado.nombre} ${diputado.apellido}`}</CardTitle>
+
+            <dl className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="flex flex-col">
+                <dt className="text-sm font-medium text-muted-foreground">Provincia</dt>
+                <dd>{diputado.provincia}</dd>
+              </div>
+              <div className="flex flex-col">
+                <dt className="text-sm font-medium text-muted-foreground">Bloque</dt>
+                <dd>{diputado.bloque}</dd>
+              </div>
+              <div className="flex flex-col">
+                <dt className="text-sm font-medium text-muted-foreground">Género</dt>
+                <dd>{diputado.genero}</dd>
+              </div>
+              <div className="flex flex-col">
+                <dt className="text-sm font-medium text-muted-foreground">Período de Mandato</dt>
+                <dd>{`${formatDate(diputado.periodoMandato.inicio)} - ${formatDate(diputado.periodoMandato.fin)}`}</dd>
+              </div>
+              <div className="flex flex-col">
+                <dt className="text-sm font-medium text-muted-foreground">Fecha de Juramento</dt>
+                <dd>{formatDate(diputado.juramentoFecha)}</dd>
+              </div>
+              <div className="flex flex-col">
+                <dt className="text-sm font-medium text-muted-foreground">Fecha de Cese</dt>
+                <dd>{formatDate(diputado.ceseFecha)}</dd>
+              </div>
+            </dl>
           </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4">
-            <dl className="flex flex-wrap gap-3 sm:gap-6">
-                <div className="flex flex-col">
-                  <dt className="text-sm font-medium text-muted-foreground">Provincia</dt>
-                  <dd>{diputado.provincia}</dd>
-                </div>
-                <div className="flex flex-col">
-                    <dt className="text-sm font-medium text-muted-foreground">Bloque</dt>
-                    <dd>{diputado.bloque}</dd>
-                </div>
-                <div className="flex flex-col">
-                    <dt className="text-sm font-medium text-muted-foreground">Género</dt>
-                    <dd>{diputado.genero}</dd>
-                </div>
-                <div className="flex flex-col">
-                    <dt className="text-sm font-medium text-muted-foreground">Período de Mandato</dt>
-                    <dd>{`${formatDate(diputado.periodoMandato.inicio)} - ${formatDate(diputado.periodoMandato.fin)}`}</dd>
-                </div>
-                <div className="flex flex-col">
-                    <dt className="text-sm font-medium text-muted-foreground">Fecha de Juramento</dt>
-                    <dd>{formatDate(diputado.juramentoFecha)}</dd>
-                </div>
-                <div className="flex flex-col">
-                    <dt className="text-sm font-medium text-muted-foreground">Fecha de Cese</dt>
-                    <dd>{formatDate(diputado.ceseFecha)}</dd>
-                </div>
-            </dl>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <div className="grid sm:grid-cols-3 gap-4">
