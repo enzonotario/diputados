@@ -112,7 +112,7 @@ export default function DiputadosPageContent() {
     },
     {
       key: "apellido",
-      title: "Apellido y Nombre",
+      title: "Nombre",
       sortable: true,
       render: (diputado: Diputado) => `${diputado.apellido}, ${diputado.nombre}`,
     },
