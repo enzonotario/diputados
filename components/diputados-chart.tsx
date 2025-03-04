@@ -210,7 +210,7 @@ export function DiputadosChart() {
         <Button asChild size="lg">
           <Link href="/diputados">
             <Users className="h-4 w-4" />
-            <span className="hidden sm:inline">Ver Diputados</span>
+            <span>Ver Diputados</span>
           </Link>
         </Button>
       </div>

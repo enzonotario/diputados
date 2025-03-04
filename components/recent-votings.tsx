@@ -117,7 +117,7 @@ export function RecentVotings() {
         <Button asChild size="lg">
           <Link href="/actas">
             <FileText className="h-4 w-4" />
-            <span className="hidden sm:inline">Ver Actas</span>
+            <span>Ver Actas</span>
           </Link>
         </Button>
       </div>
