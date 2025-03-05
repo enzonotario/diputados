@@ -1,10 +1,10 @@
 "use client"
 
 import {useEffect, useState} from "react"
-import {useParams, useRouter} from "next/navigation"
-import {getActaById, getDiputados} from "@/lib/api"
-import type {Acta, Diputado, SortConfig} from "@/lib/types"
-import {formatDate, sortDiputados} from "@/lib/utils"
+import {useRouter} from "next/navigation"
+import {getActaWithDiputadosById} from "@/lib/api"
+import type {Acta, Diputado, SortConfig, Voto} from "@/lib/types"
+import {formatDate, sortDiputados, sortVotos} from "@/lib/utils"
 import {DataTable} from "@/components/data-table"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
@@ -13,22 +13,19 @@ import {AlertCircle, CheckCircle, Loader2, MinusCircle, User, XCircle} from "luc
 import {Progress} from "@/components/ui/progress";
 import {VotacionesProgress} from "@/components/votaciones-progress";
 
-export default function ActaPageContent({id}: {id: string}) {
+export default function ActaPageContent({id}: { id: string }) {
   const router = useRouter()
   const [acta, setActa] = useState<Acta | null>(null)
-  const [diputados, setDiputados] = useState<Diputado[]>([])
   const [loading, setLoading] = useState(true)
-  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: "nombreCompleto", direction: "asc" })
+  const [sortConfig, setSortConfig] = useState<SortConfig>({key: "nombreCompleto", direction: "asc"})
 
   useEffect(() => {
     async function fetchData() {
       setLoading(true)
 
-      const actaData = await getActaById(id)
-      const diputadosData = await getDiputados()
+      const actaData = await getActaWithDiputadosById(id)
 
       setActa(actaData)
-      setDiputados(diputadosData)
 
       setLoading(false)
     }
@@ -36,13 +33,13 @@ export default function ActaPageContent({id}: {id: string}) {
   }, [id])
 
   const handleSort = (key: string, direction: "asc" | "desc") => {
-    setSortConfig({ key, direction })
+    setSortConfig({key, direction})
   }
 
   if (loading) {
     return (
       <div className="container py-10 flex justify-center items-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary"/>
       </div>
     )
   }
@@ -60,19 +57,10 @@ export default function ActaPageContent({id}: {id: string}) {
     )
   }
 
-  const votosConDiputados = acta.votos.map((voto) => {
-    const diputado = diputados.find((d) => `${d.apellido}, ${d.nombre}` === voto.diputado)
-    return {
-      ...voto,
-      nombreCompleto: diputado ? `${diputado.apellido}, ${diputado.nombre}` : voto.diputado,
-      provincia: diputado?.provincia || "Desconocida",
-      bloque: diputado?.bloque || "Desconocido",
-      foto: diputado?.foto || "",
-      diputadoId: diputado?.id,
-    }
-  })
-
-  const votosConDiputadosSorted = sortDiputados(votosConDiputados, sortConfig)
+  const votosConDiputadosSorted = sortDiputados(
+    acta.votos.map((voto: Voto) => voto.diputadoObj) as Diputado[],
+    sortConfig
+  )
 
   const total = acta.votosAfirmativos + acta.votosNegativos + acta.abstenciones + acta.ausentes
   const presentes = acta.votosAfirmativos + acta.votosNegativos + acta.abstenciones
@@ -86,10 +74,10 @@ export default function ActaPageContent({id}: {id: string}) {
     {
       key: "foto",
       title: "",
-      render: (voto: any) => (
+      render: (diputado: any) => (
         <Avatar>
-          <AvatarImage src={voto.foto || "/placeholder.svg?height=40&width=40"} alt={voto.nombreCompleto} />
-          <AvatarFallback>{voto.nombreCompleto.substring(0, 2)}</AvatarFallback>
+          <AvatarImage src={diputado.foto || "/placeholder.svg?height=40&width=40"} alt={diputado.nombreCompleto}/>
+          <AvatarFallback>{diputado.nombreCompleto?.substring(0, 2)}</AvatarFallback>
         </Avatar>
       ),
     },
@@ -117,35 +105,35 @@ export default function ActaPageContent({id}: {id: string}) {
           case "afirmativo":
             return (
               <div className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-teal-500" />
+                <CheckCircle className="h-5 w-5 text-teal-500"/>
                 <span className="text-sm font-medium text-teal-800 dark:text-teal-200">Afirmativo</span>
               </div>
             )
           case "negativo":
             return (
               <div className="flex items-center gap-2">
-                <XCircle className="h-5 w-5 text-red-500" />
+                <XCircle className="h-5 w-5 text-red-500"/>
                 <span className="text-sm font-medium text-red-800 dark:text-red-200">Negativo</span>
               </div>
             )
           case "abstencion":
             return (
               <div className="flex items-center gap-2">
-                <MinusCircle className="h-5 w-5 text-yellow-500" />
+                <MinusCircle className="h-5 w-5 text-yellow-500"/>
                 <span className="text-sm font-medium text-yellow-800 dark:text-yellow-200">Abstención</span>
               </div>
             )
           case "ausente":
             return (
               <div className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-muted-foreground" />
+                <AlertCircle className="h-5 w-5 text-muted-foreground"/>
                 <span className="text-sm font-medium text-muted-foreground">Ausente</span>
               </div>
             )
           default:
             return (
               <div className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-muted-foreground" />
+                <AlertCircle className="h-5 w-5 text-muted-foreground"/>
                 <span className="text-sm font-medium text-muted-foreground">{voto.tipoVoto}</span>
               </div>
             )
@@ -214,16 +202,16 @@ export default function ActaPageContent({id}: {id: string}) {
 
               <div className="flex flex-wrap gap-1">
                 {[...Array(presentes)].map((_, i) => (
-                    <User
-                        key={`presente-${i}`}
-                        className="size-3 md:size-4 text-teal-500 dark:text-teal-400"
-                    />
+                  <User
+                    key={`presente-${i}`}
+                    className="size-3 md:size-4 text-teal-500 dark:text-teal-400"
+                  />
                 ))}
                 {[...Array(ausentes)].map((_, i) => (
-                    <User
-                        key={`ausente-${i}`}
-                        className="size-3 md:size-4 text-red-500 dark:text-red-400"
-                    />
+                  <User
+                    key={`ausente-${i}`}
+                    className="size-3 md:size-4 text-red-500 dark:text-red-400"
+                  />
                 ))}
               </div>
             </div>
@@ -234,7 +222,7 @@ export default function ActaPageContent({id}: {id: string}) {
               <span className="text-sm">Presentismo</span>
               <span className="text-sm font-medium">{presentismo}%</span>
             </div>
-            <Progress value={presentismo} className="h-2 rounded-t-none" />
+            <Progress value={presentismo} className="h-2 rounded-t-none"/>
           </div>
         </Card>
 
@@ -246,7 +234,8 @@ export default function ActaPageContent({id}: {id: string}) {
             <div className="flex-1 space-y-4">
               <div className="grid grid-cols-3 gap-4">
                 <div className="bg-muted p-4 rounded-lg text-center">
-                  <span className="text-xl md:text-3xl font-bold text-teal-700 dark:text-teal-400">{votosAfirmativos}</span>
+                  <span
+                    className="text-xl md:text-3xl font-bold text-teal-700 dark:text-teal-400">{votosAfirmativos}</span>
                   <p className="text-sm text-gray-500">Afirmativos</p>
                 </div>
                 <div className="bg-muted p-4 rounded-lg text-center">
@@ -254,35 +243,36 @@ export default function ActaPageContent({id}: {id: string}) {
                   <p className="text-sm text-gray-500">Negativos</p>
                 </div>
                 <div className="bg-muted p-4 rounded-lg text-center">
-                  <span className="text-xl md:text-3xl font-bold text-orange-700 dark:text-orange-400">{abstenciones}</span>
+                  <span
+                    className="text-xl md:text-3xl font-bold text-orange-700 dark:text-orange-400">{abstenciones}</span>
                   <p className="text-sm text-gray-500">Abstenciones</p>
                 </div>
               </div>
 
               <div className="flex flex-wrap gap-1">
                 {[...Array(votosAfirmativos)].map((_, i) => (
-                    <CheckCircle
-                        key={`afirmativo-${i}`}
-                        className="size-3 md:size-4 text-teal-500 dark:text-teal-400"
-                    />
+                  <CheckCircle
+                    key={`afirmativo-${i}`}
+                    className="size-3 md:size-4 text-teal-500 dark:text-teal-400"
+                  />
                 ))}
                 {[...Array(votosNegativos)].map((_, i) => (
-                    <XCircle
-                        key={`negativo-${i}`}
-                        className="size-3 md:size-4 text-red-500 dark:text-red-400"
-                    />
+                  <XCircle
+                    key={`negativo-${i}`}
+                    className="size-3 md:size-4 text-red-500 dark:text-red-400"
+                  />
                 ))}
                 {[...Array(abstenciones)].map((_, i) => (
-                    <MinusCircle
-                        key={`abstencion-${i}`}
-                        className="size-3 md:size-4 text-orange-500 dark:text-orange-400"
-                    />
+                  <MinusCircle
+                    key={`abstencion-${i}`}
+                    className="size-3 md:size-4 text-orange-500 dark:text-orange-400"
+                  />
                 ))}
               </div>
             </div>
           </CardContent>
           <div className="flex-1"></div>
-          <VotacionesProgress acta={acta} />
+          <VotacionesProgress acta={acta}/>
         </Card>
       </div>
 
@@ -296,7 +286,7 @@ export default function ActaPageContent({id}: {id: string}) {
             columns={columnasVotos}
             searchable
             searchKeys={["nombreCompleto", "bloque", "provincia", "tipoVoto"]}
-            onRowClick={(voto) => router.push(`/diputados/${voto.diputadoId}`)}
+            onRowClick={(diputado) => router.push(`/diputados/${diputado.id}`)}
             emptyMessage="No se encontraron votos para esta acta."
             sortConfig={sortConfig}
             onSort={handleSort}

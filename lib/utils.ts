@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import type { Diputado, Acta, SortConfig, FilterConfig } from "@/lib/types"
+import type {Diputado, Acta, SortConfig, FilterConfig, Voto} from "@/lib/types"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -165,7 +165,7 @@ export function getYearsFromActas(actas: Acta[]): string[] {
   return Array.from(years).sort((a, b) => b.localeCompare(a)) // Ordenar de más reciente a más antiguo
 }
 
-export function calcularEstadisticasDiputado(diputado: Diputado, actas: Acta[]) {
+export function calcularEstadisticasDiputado(actas: Acta[]) {
   let totalVotaciones = 0
   let votosAfirmativos = 0
   let votosNegativos = 0
@@ -173,15 +173,13 @@ export function calcularEstadisticasDiputado(diputado: Diputado, actas: Acta[]) 
   let ausencias = 0
 
   actas.forEach((acta) => {
-    const voto = acta.votos.find((v) => v.diputado === `${diputado.apellido}, ${diputado.nombre}`)
-
-    if (!voto) {
+    if (!acta.votoDiputado) {
       return
     }
 
     totalVotaciones++
 
-    switch (voto.tipoVoto.toLowerCase()) {
+    switch (acta.votoDiputado.tipoVoto.toLowerCase()) {
       case "afirmativo":
         votosAfirmativos++
         break
@@ -206,7 +204,21 @@ export function calcularEstadisticasDiputado(diputado: Diputado, actas: Acta[]) 
     votosNegativos,
     abstenciones,
     ausencias,
-    presentismo: Math.round(presentismo * 10) / 10, // Redondear a 1 decimal
+    presentismo: Math.round(presentismo * 10) / 10, // Redondear a 1 decimal.
   }
 }
 
+export function sortVotos(votos: Voto[], sortConfig: SortConfig): Voto[] {
+  return [...votos].sort((a, b) => {
+    const aValue = a[sortConfig.key as keyof Voto]
+    const bValue = b[sortConfig.key as keyof Voto]
+
+    // Convertir a minúsculas si son strings para ordenar sin distinguir mayúsculas/minúsculas
+    const aCompare = typeof aValue === "string" ? aValue.toLowerCase() : aValue
+    const bCompare = typeof bValue === "string" ? bValue.toLowerCase() : bValue
+
+    if (aCompare < bCompare) return sortConfig.direction === "asc" ? -1 : 1
+    if (aCompare > bCompare) return sortConfig.direction === "asc" ? 1 : -1
+    return 0
+  })
+}

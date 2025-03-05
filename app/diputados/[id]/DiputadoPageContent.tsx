@@ -1,10 +1,10 @@
 "use client"
 
 import {useEffect, useState} from "react"
-import {useParams, useRouter} from "next/navigation"
-import {getActas, getDiputadoById} from "@/lib/api"
+import {useRouter} from "next/navigation"
+import {getDiputadosConActas} from "@/lib/api"
 import type {Acta, Diputado, SortConfig} from "@/lib/types"
-import {calcularEstadisticasDiputado, formatDate, sortActas} from "@/lib/utils"
+import {formatDate, sortActas} from "@/lib/utils"
 import {DataTable} from "@/components/data-table"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
@@ -15,6 +15,7 @@ import {Progress} from "@/components/ui/progress"
 export default function DiputadoPageContent({id}: {id: string}) {
   const router = useRouter()
   const [diputado, setDiputado] = useState<Diputado | null>(null)
+  const [estadisticas, setEstadisticas] = useState<Diputado["estadisticas"] | null>(null)
   const [actas, setActas] = useState<Acta[]>([])
   const [loading, setLoading] = useState(true)
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: "fecha", direction: "desc" })
@@ -23,11 +24,18 @@ export default function DiputadoPageContent({id}: {id: string}) {
     async function fetchData() {
       setLoading(true)
 
-      const diputadoData = await getDiputadoById(id)
-      const actasData = await getActas()
+      const diputados = await getDiputadosConActas()
 
-      setDiputado(diputadoData)
-      setActas(actasData)
+      const diputado = diputados.find((diputado) => diputado.id === id) || null
+
+      setDiputado(diputado)
+
+      const actasDiputado = diputado?.actasDiputado || []
+      setActas(actasDiputado)
+
+      if (diputado) {
+        setEstadisticas(diputado.estadisticas)
+      }
 
       setLoading(false)
     }
@@ -59,14 +67,7 @@ export default function DiputadoPageContent({id}: {id: string}) {
     )
   }
 
-  const actasDiputado = actas.filter(
-      (acta) => acta.votos.some((voto) => voto.diputado === `${diputado.apellido}, ${diputado.nombre}`)
-      && new Date(acta.fecha) >= new Date(diputado.periodoMandato.inicio)
-  )
-
-  const actasDiputadoSorted = sortActas(actasDiputado, sortConfig)
-
-  const estadisticas = calcularEstadisticasDiputado(diputado, actasDiputado)
+  const actasSorted = sortActas(actas, sortConfig)
 
   const columnasVotaciones = [
     {
@@ -89,13 +90,11 @@ export default function DiputadoPageContent({id}: {id: string}) {
       ),
     },
     {
-      key: "voto",
+      key: "tipoVotoDiputado",
       title: "Voto",
+      sortable: true,
       render: (acta: Acta) => {
-        const voto = acta.votos.find((v) => v.diputado === `${diputado.apellido}, ${diputado.nombre}`)
-        if (!voto) return <AlertCircle className="h-5 w-5 text-muted-foreground" />
-
-        switch (voto.tipoVoto.toLowerCase()) {
+        switch (acta.tipoVotoDiputado?.toLowerCase()) {
           case "afirmativo":
             return <div className="flex items-center gap-2">
               <CheckCircle className="h-5 w-5 text-teal-500" />
@@ -159,15 +158,14 @@ export default function DiputadoPageContent({id}: {id: string}) {
               </div>
               <div className="flex flex-col">
                 <dt className="text-sm font-medium text-muted-foreground">Fecha de Cese</dt>
-                <dd>{formatDate(diputado.ceseFecha)}</dd>
+                <dd>{diputado.ceseFecha ? formatDate(diputado.ceseFecha) : "-"}</dd>
               </div>
             </dl>
           </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4">
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {estadisticas && (<div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <div className="grid sm:grid-cols-3 gap-4">
                 <div className="rounded-lg border p-3 bg-teal-50 dark:bg-teal-950">
                   <div className="text-3xl font-bold text-teal-600 dark:text-teal-400">
@@ -210,7 +208,7 @@ export default function DiputadoPageContent({id}: {id: string}) {
                   <Progress value={estadisticas.presentismo} className="h-2" />
                 </div>
               </div>
-            </div>
+            </div>)}
           </div>
         </CardContent>
       </Card>
@@ -221,7 +219,7 @@ export default function DiputadoPageContent({id}: {id: string}) {
         </CardHeader>
         <CardContent>
           <DataTable
-            data={actasDiputadoSorted}
+            data={actasSorted}
             columns={columnasVotaciones}
             searchable
             searchKeys={["titulo", "resultado", "fecha"]}

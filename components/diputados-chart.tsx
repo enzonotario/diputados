@@ -186,7 +186,7 @@ export function DiputadosChart() {
                 fill={bloqueColores[punto.diputado.bloque]}
                 stroke="#fff"
                 strokeWidth={1}
-                data-tooltip-content={`${punto.diputado.apellido}, ${punto.diputado.nombre} (${punto.diputado.bloque})`}
+                data-tooltip-content={`${punto.diputado.nombreCompleto} (${punto.diputado.bloque})`}
               />
             ))}
           </svg>

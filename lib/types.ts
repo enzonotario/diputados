@@ -2,6 +2,8 @@ export interface Diputado {
   id: string
   nombre: string
   apellido: string
+  nombreCompleto?: string
+  nombreSlug?: string
   genero: string
   provincia: string
   periodoMandato: {
@@ -16,10 +18,21 @@ export interface Diputado {
     fin: string
   }
   foto: string
+  estadisticas?: {
+    totalVotaciones: number
+    presentismo: number
+    votosAfirmativos: number
+    votosNegativos: number
+    abstenciones: number
+    ausencias: number
+  }
+  actasDiputado?: Acta[]
 }
 
 export interface Voto {
   diputado: string
+  diputadoSlug?: string
+  diputadoObj?: Diputado
   tipoVoto: string
   imagen: string
   videoDiscurso: string
@@ -39,6 +52,8 @@ export interface Acta {
   abstenciones: number
   ausentes: number
   votos: Voto[]
+  votoDiputado?: Voto
+  tipoVotoDiputado?: string
 }
 
 export type SortDirection = "asc" | "desc"

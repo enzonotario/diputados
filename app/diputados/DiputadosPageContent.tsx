@@ -2,17 +2,10 @@
 
 import {useEffect, useState} from "react"
 import {useRouter} from "next/navigation"
-import { useQueryState } from 'nuqs'
-import {getActas, getDiputados} from "@/lib/api"
+import {useQueryState} from 'nuqs'
+import {getDiputadosConActas} from "@/lib/api"
 import type {Diputado, FilterConfig, SortConfig} from "@/lib/types"
-import {
-  calcularEstadisticasDiputado,
-  filterDiputados,
-  formatDate,
-  getUniqueValues,
-  isDiputadoActivo,
-  sortDiputados
-} from "@/lib/utils"
+import {filterDiputados, formatDate, getUniqueValues, isDiputadoActivo, sortDiputados} from "@/lib/utils"
 import {DataTable} from "@/components/data-table"
 import {FilterSidebar} from "@/components/filter-sidebar"
 import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs"
@@ -35,17 +28,7 @@ export default function DiputadosPageContent() {
   useEffect(() => {
     async function fetchData() {
       setLoading(true)
-      const data = await getDiputados()
-      const actas = await getActas()
-      const diputados = data
-        .map((diputado) => {
-          const actasDiputado = actas.filter(
-              (acta) => acta.votos.some((voto) => voto.diputado === `${diputado.apellido}, ${diputado.nombre}`)
-              )
-          const estadisticas = calcularEstadisticasDiputado(diputado, actasDiputado)
-          return { ...diputado, estadisticas, actasDiputado }
-        })
-
+      const diputados = await getDiputadosConActas()
       setDiputados(diputados)
       setLoading(false)
     }
@@ -113,7 +96,7 @@ export default function DiputadosPageContent() {
       key: "apellido",
       title: "Nombre",
       sortable: true,
-      render: (diputado: Diputado) => `${diputado.apellido}, ${diputado.nombre}`,
+      render: (diputado: Diputado) => diputado.nombreCompleto,
     },
     {
       key: "provincia",
@@ -143,8 +126,8 @@ export default function DiputadosPageContent() {
       title: "Presentismo",
       sortable: true,
       render: (diputado: Diputado) => (
-        <Badge variant={diputado.estadisticas.presentismo > 80 ? "teal" : "red"}>
-          {diputado.estadisticas.presentismo}%
+        <Badge variant={(diputado.estadisticas?.presentismo || 0) > 80 ? "teal" : "red"}>
+          {diputado.estadisticas?.presentismo}%
         </Badge>
       ),
     },
