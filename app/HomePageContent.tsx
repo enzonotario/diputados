@@ -23,7 +23,7 @@ export default function HomePageContent() {
               <span>Ver Actas</span>
             </Link>
           </Button>
-          <Button asChild variant="outline" size="lg">
+          <Button asChild variant="secondary" size="lg">
             <Link href="/diputados">
               <Users className="h-4 w-4" />
               <span>Ver Diputados
@@ -36,7 +36,7 @@ export default function HomePageContent() {
       <Separator className="my-20"/>
 
       <section>
-        <DiputadosChart/>
+        <DiputadosChart />
       </section>
 
       <Separator className="my-20"/>

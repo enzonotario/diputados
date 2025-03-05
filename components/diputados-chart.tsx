@@ -164,7 +164,7 @@ export function DiputadosChart() {
           {diputados.length} diputados distribuidos en {bloquesOrdenados.length} bloques
         </p>
 
-        <div className="flex justify-center overflow-x-auto">
+        <div className="w-full max-w-xl mx-auto flex justify-center overflow-x-auto">
           <svg width={width} height="100%" viewBox={`0 0 ${width} ${height}`}>
             {/* Fondo del semicírculo */}
             <path
@@ -192,8 +192,7 @@ export function DiputadosChart() {
           </svg>
         </div>
 
-        {/* Leyenda */}
-        <div className="flex flex-wrap justify-start sm:justify-center gap-4 mt-4">
+        <div className="w-full max-w-3xl mx-auto flex flex-wrap justify-start sm:justify-center gap-4 mt-4">
           {bloquesOrdenados.map(bloque => (
             <div key={bloque} className="flex items-center gap-2 sm:text-center">
               <div
@@ -206,11 +205,17 @@ export function DiputadosChart() {
         </div>
       </div>
 
-      <div className="flex justify-center">
+      <div className="flex justify-center gap-2">
         <Button asChild size="lg">
           <Link href="/diputados">
             <Users className="h-4 w-4" />
             <span>Ver Diputados</span>
+          </Link>
+        </Button>
+        <Button asChild size="lg" variant="secondary">
+          <Link href="/diputados/bloques">
+            <Users className="h-4 w-4" />
+            <span>Ver Diputados por Bloque</span>
           </Link>
         </Button>
       </div>
