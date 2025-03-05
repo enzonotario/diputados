@@ -1,6 +1,6 @@
 import Link from "next/link"
 import {Button} from "@/components/ui/button"
-import {LandmarkIcon} from "lucide-react"
+import {FileText, LandmarkIcon, Users} from "lucide-react"
 import {RecentVotings} from "@/components/recent-votings"
 import {DiputadosChart} from "@/components/diputados-chart"
 import {Separator} from "@/components/ui/separator";
@@ -18,10 +18,17 @@ export default function HomePageContent() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4">
           <Button asChild size="lg">
-            <Link href="/actas">Ver Actas</Link>
+            <Link href="/actas">
+              <FileText className="h-4 w-4" />
+              <span>Ver Actas</span>
+            </Link>
           </Button>
           <Button asChild variant="outline" size="lg">
-            <Link href="/diputados">Ver Diputados</Link>
+            <Link href="/diputados">
+              <Users className="h-4 w-4" />
+              <span>Ver Diputados
+              </span>
+            </Link>
           </Button>
         </div>
       </section>
