@@ -45,7 +45,6 @@ export default function DiputadosPageContent() {
           const estadisticas = calcularEstadisticasDiputado(diputado, actasDiputado)
           return { ...diputado, estadisticas, actasDiputado }
         })
-        .filter((diputado) => diputado.actasDiputado.length > 0)
 
       setDiputados(diputados)
       setLoading(false)
