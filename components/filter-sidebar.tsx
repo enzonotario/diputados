@@ -1,12 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import type { FilterConfig } from "@/lib/types"
-import { X } from "lucide-react"
+import {useEffect, useState} from "react"
+import {Button} from "@/components/ui/button"
+import {Input} from "@/components/ui/input"
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
+import {Badge} from "@/components/ui/badge"
+import {X} from "lucide-react"
+import type {FilterConfig} from "@/lib/types"
 
 interface FilterOption {
   key: string
@@ -22,17 +22,19 @@ interface FilterSidebarProps {
   onReset?: () => void
 }
 
-export function FilterSidebar({ filters, onFilterChange, filterOptions, onReset }: FilterSidebarProps) {
+export function FilterSidebar({filters, onFilterChange, filterOptions, onReset}: FilterSidebarProps) {
   const [localFilters, setLocalFilters] = useState<FilterConfig>(filters)
+  const [activeFilter, setActiveFilter] = useState<string | null>(null)
 
   useEffect(() => {
     setLocalFilters(filters)
   }, [filters])
 
   const handleFilterChange = (key: string, value: string | number | boolean | null) => {
-    const updatedFilters = { ...localFilters, [key]: value }
+    const updatedFilters = {...localFilters, [key]: value}
     setLocalFilters(updatedFilters)
     onFilterChange(updatedFilters)
+    setActiveFilter(null)
   }
 
   const handleReset = () => {
@@ -46,45 +48,71 @@ export function FilterSidebar({ filters, onFilterChange, filterOptions, onReset 
     if (onReset) onReset()
   }
 
+  const handleRemoveFilter = (key: string) => {
+    const updatedFilters = {...localFilters, [key]: ""}
+    setLocalFilters(updatedFilters)
+    onFilterChange(updatedFilters)
+  }
+
   return (
-    <div className="space-y-4 p-4 border rounded-lg bg-card">
-      <div className="flex items-center justify-between">
+    <div className="p-4 border rounded-lg bg-card">
+      <div className="flex items-center justify-between flex-wrap">
         <h3 className="font-medium">Filtros</h3>
         <Button variant="ghost" size="sm" onClick={handleReset}>
           <X className="h-4 w-4 mr-1" />
           Limpiar
         </Button>
       </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="flex flex-wrap items-center gap-2">
         {filterOptions.map((option) => (
-          <div key={option.key} className="space-y-2">
-            <Label htmlFor={option.key}>{option.label}</Label>
+          <div key={option.key} className="relative">
+            <Badge
+              variant={localFilters[option.key] ? "default" : "outline"}
+              className="cursor-pointer"
+              onClick={() => setActiveFilter(option.key)}
+            >
+              {option.label}
+              {localFilters[option.key] && (
+                <X
+                  className="h-3 w-3 ml-1"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleRemoveFilter(option.key)
+                  }}
+                />
+              )}
+            </Badge>
 
-            {option.type === "text" ? (
-              <Input
-                id={option.key}
-                value={(localFilters[option.key] as string) || ""}
-                onChange={(e) => handleFilterChange(option.key, e.target.value)}
-                placeholder={`Filtrar por ${option.label.toLowerCase()}`}
-              />
-            ) : (
-              <Select
-                value={(localFilters[option.key] as string) || ""}
-                onValueChange={(value) => handleFilterChange(option.key, value)}
-              >
-                <SelectTrigger id={option.key}>
-                  <SelectValue placeholder={`Seleccionar ${option.label.toLowerCase()}`} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  {option.options?.map((opt) => (
-                    <SelectItem key={opt} value={opt}>
-                      {opt}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            {activeFilter === option.key && (
+              <div className="absolute top-8 left-0 z-10 rounded-lg shadow-lg">
+                {option.type === "text" ? (
+                  <Input
+                    autoFocus
+                    value={(localFilters[option.key] as string) || ""}
+                    onChange={(e) => handleFilterChange(option.key, e.target.value)}
+                    placeholder={`Filtrar por ${option.label.toLowerCase()}`}
+                  />
+                ) : (
+                  <Select
+                    open={true}
+                    onOpenChange={(open) => !open && setActiveFilter(null)}
+                    value={(localFilters[option.key] as string) || ""}
+                    onValueChange={(value) => handleFilterChange(option.key, value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={`Seleccionar ${option.label.toLowerCase()}`}/>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos</SelectItem>
+                      {option.options?.map((opt) => (
+                        <SelectItem key={opt} value={opt}>
+                          {opt}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
             )}
           </div>
         ))}
