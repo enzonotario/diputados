@@ -205,7 +205,7 @@ export function DiputadosChart() {
         </div>
       </div>
 
-      <div className="flex justify-center gap-2">
+      <div className="flex flex-col items-center sm:flex-row sm:justify-center gap-4">
         <Button asChild size="lg">
           <Link href="/diputados">
             <Users className="h-4 w-4" />

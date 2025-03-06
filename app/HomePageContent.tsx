@@ -19,15 +19,14 @@ export default function HomePageContent() {
         <div className="flex flex-col sm:flex-row gap-4">
           <Button asChild size="lg">
             <Link href="/actas">
-              <FileText className="h-4 w-4" />
+              <FileText className="h-4 w-4"/>
               <span>Ver Actas</span>
             </Link>
           </Button>
           <Button asChild variant="secondary" size="lg">
             <Link href="/diputados">
-              <Users className="h-4 w-4" />
-              <span>Ver Diputados
-              </span>
+              <Users className="h-4 w-4"/>
+              <span>Ver Diputados</span>
             </Link>
           </Button>
         </div>
@@ -36,7 +35,7 @@ export default function HomePageContent() {
       <Separator className="my-20"/>
 
       <section>
-        <DiputadosChart />
+        <DiputadosChart/>
       </section>
 
       <Separator className="my-20"/>
