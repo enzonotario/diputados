@@ -16,13 +16,13 @@ import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
 
 export default function DiputadosPageContent() {
   const router = useRouter()
-  const [sortKey, setSortKey] = useQueryState('sort', { defaultValue: 'estadisticas.presentismo' })
-  const [sortDir, setSortDir] = useQueryState('dir', { defaultValue: 'desc' })
-  const [activeTabState, setActiveTabState] = useQueryState('tab', { defaultValue: 'activos' })
-  const [provinciaFilter, setProvinciaFilter] = useQueryState('provincia', { defaultValue: '' })
-  const [bloqueFilter, setBloqueFilter] = useQueryState('bloque', { defaultValue: '' })
-  const [generoFilter, setGeneroFilter] = useQueryState('genero', { defaultValue: '' })
-  const [searchQuery, setSearchQuery] = useQueryState('q', { defaultValue: '' })
+  const [sortKey, setSortKey] = useQueryState('sort', {defaultValue: 'estadisticas.presentismo'})
+  const [sortDir, setSortDir] = useQueryState('dir', {defaultValue: 'desc'})
+  const [activeTabState, setActiveTabState] = useQueryState('tab', {defaultValue: 'activos'})
+  const [provinciaFilter, setProvinciaFilter] = useQueryState('provincia', {defaultValue: ''})
+  const [bloqueFilter, setBloqueFilter] = useQueryState('bloque', {defaultValue: ''})
+  const [generoFilter, setGeneroFilter] = useQueryState('genero', {defaultValue: ''})
+  const [searchQuery, setSearchQuery] = useQueryState('q', {defaultValue: ''})
   const [diputados, setDiputados] = useState<Diputado[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -33,14 +33,15 @@ export default function DiputadosPageContent() {
       setDiputados(diputados)
       setLoading(false)
     }
+
     fetchData()
   }, [])
 
-  const sortConfig: SortConfig = { key: sortKey, direction: sortDir as "asc" | "desc" }
+  const sortConfig: SortConfig = {key: sortKey, direction: sortDir as "asc" | "desc"}
   const filters: FilterConfig = {
-    ...(provinciaFilter && provinciaFilter !== "all" ? { provincia: provinciaFilter } : {}),
-    ...(bloqueFilter && bloqueFilter !== "all" ? { bloque: bloqueFilter } : {}),
-    ...(generoFilter && generoFilter !== "all" ? { genero: generoFilter } : {})
+    ...(provinciaFilter && provinciaFilter !== "all" ? {provincia: provinciaFilter} : {}),
+    ...(bloqueFilter && bloqueFilter !== "all" ? {bloque: bloqueFilter} : {}),
+    ...(generoFilter && generoFilter !== "all" ? {genero: generoFilter} : {})
   }
 
   const handleSort = (key: string, direction: "asc" | "desc") => {
@@ -74,9 +75,9 @@ export default function DiputadosPageContent() {
   const generos = getUniqueValues(diputados, "genero")
 
   const filterOptions = [
-    { key: "provincia", label: "Provincia", type: "select", options: provincias },
-    { key: "bloque", label: "Bloque", type: "select", options: bloques },
-    { key: "genero", label: "Género", type: "select", options: generos },
+    {key: "provincia", label: "Provincia", type: "select", options: provincias},
+    {key: "bloque", label: "Bloque", type: "select", options: bloques},
+    {key: "genero", label: "Género", type: "select", options: generos},
   ]
 
   const columns = [
@@ -135,46 +136,40 @@ export default function DiputadosPageContent() {
   ]
 
   return (
-    <div className="container py-10">
+    <div className="container py-10 space-y-6">
       <h1 className="text-3xl font-bold mb-6">Diputados de Argentina</h1>
 
-      <div className="grid grid-cols-1 gap-6">
-        <div className="md:col-span-1">
-          <FilterSidebar filters={filters} onFilterChange={handleFilterChange} filterOptions={filterOptions} />
-        </div>
+      <FilterSidebar filters={filters} onFilterChange={handleFilterChange} filterOptions={filterOptions}/>
 
-        <div className="md:col-span-3">
-          <Tabs value={activeTabState} onValueChange={setActiveTabState} className="mb-6">
-            <ScrollArea>
-              <div className="flex">
-                <TabsList>
-                  <TabsTrigger value="activos">Diputados Activos ({activeDiputados.length})</TabsTrigger>
-                  <TabsTrigger value="inactivos">Diputados Inactivos ({inactiveDiputados.length})</TabsTrigger>
-                </TabsList>
-              </div>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
-          </Tabs>
+      <Tabs value={activeTabState} onValueChange={setActiveTabState}>
+        <ScrollArea>
+          <div className="flex">
+            <TabsList>
+              <TabsTrigger value="activos">Diputados Activos ({activeDiputados.length})</TabsTrigger>
+              <TabsTrigger value="inactivos">Diputados Inactivos ({inactiveDiputados.length})</TabsTrigger>
+            </TabsList>
+          </div>
+          <ScrollBar orientation="horizontal"/>
+        </ScrollArea>
+      </Tabs>
 
-          {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          ) : (
-            <DataTable
-              data={displayedDiputados}
-              columns={columns}
-              sortConfig={sortConfig}
-              onSort={handleSort}
-              onSearchChange={handleSearchChange}
-              searchable
-              searchKeys={["nombre", "apellido", "provincia", "bloque"]}
-              onRowClick={(diputado) => router.push(`/diputados/${diputado.id}`)}
-              emptyMessage={`No se encontraron diputados ${activeTabState === "activos" ? "activos" : "inactivos"} con los filtros aplicados.`}
-            />
-          )}
+      {loading ? (
+        <div className="flex justify-center items-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-primary"/>
         </div>
-      </div>
+      ) : (
+        <DataTable
+          data={displayedDiputados}
+          columns={columns}
+          sortConfig={sortConfig}
+          onSort={handleSort}
+          onSearchChange={handleSearchChange}
+          searchable
+          searchKeys={["nombre", "apellido", "provincia", "bloque"]}
+          onRowClick={(diputado) => router.push(`/diputados/${diputado.id}`)}
+          emptyMessage={`No se encontraron diputados ${activeTabState === "activos" ? "activos" : "inactivos"} con los filtros aplicados.`}
+        />
+      )}
     </div>
   )
 }
