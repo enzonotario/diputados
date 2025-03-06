@@ -12,6 +12,7 @@ import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {Badge} from "@/components/ui/badge"
 import {Loader2} from "lucide-react"
+import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
 
 export default function DiputadosPageContent() {
   const router = useRouter()
@@ -144,10 +145,15 @@ export default function DiputadosPageContent() {
 
         <div className="md:col-span-3">
           <Tabs value={activeTabState} onValueChange={setActiveTabState} className="mb-6">
-            <TabsList>
-              <TabsTrigger value="activos">Diputados Activos ({activeDiputados.length})</TabsTrigger>
-              <TabsTrigger value="inactivos">Diputados Inactivos ({inactiveDiputados.length})</TabsTrigger>
-            </TabsList>
+            <ScrollArea>
+              <div className="flex">
+                <TabsList>
+                  <TabsTrigger value="activos">Diputados Activos ({activeDiputados.length})</TabsTrigger>
+                  <TabsTrigger value="inactivos">Diputados Inactivos ({inactiveDiputados.length})</TabsTrigger>
+                </TabsList>
+              </div>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
           </Tabs>
 
           {loading ? (

@@ -115,7 +115,7 @@ export default function ActasPageContent() {
       <h1 className="text-3xl font-bold mb-6">Actas de Votación</h1>
       <Tabs value={yearFilter || "todos"} onValueChange={handleYearChange} className="mb-6">
         <TabsList className="w-full">
-          <ScrollArea >
+          <ScrollArea>
             <div className="flex">
               <TabsTrigger value="todos">Todos los años</TabsTrigger>
               {years.map((year) => (
