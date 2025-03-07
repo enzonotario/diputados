@@ -6,7 +6,7 @@ import {Button} from "@/components/ui/button";
 import {Loader2, Users} from 'lucide-react';
 import {useDiputados} from '@/hooks/use-diputados';
 import {Diputado} from "@/lib/types";
-import colors from 'tailwind-colors';
+import colors from "tailwind-colors";
 
 export function DiputadosChart() {
   const {diputados, loading, bloqueColores} = useDiputados();
@@ -30,100 +30,129 @@ export function DiputadosChart() {
   );
 
   const width = 1000;
-  const height = 500;
-  const outerRadius = Math.min(width, height) * 0.8;
-  const innerRadius = outerRadius * 0.4;
+  const height = 400;
+  const outerRadius = 450;
+  const innerRadius = 200;
 
   const puntos: { x: number; y: number; diputado: Diputado }[] = [];
   const totalDiputados = diputados.length;
 
   const startAngle = Math.PI;
   const endAngle = 0;
+  const centerX = width / 2;
+  const centerY = height;
 
-  const numFilas = 5;
+  const bloquePositionMap: Record<string, number> = {};
 
-  const asientosPorFila = [];
-  const totalAsientos = totalDiputados;
+  bloquesOrdenados.forEach((bloque, index) => {
+    bloquePositionMap[bloque] = 10 + (80 * (index + 1)) / (bloquesOrdenados.length + 1);
+  });
 
-  let asientosRestantes = totalAsientos;
-  for (let i = 0; i < numFilas; i++) {
-    const ratio = (numFilas - i) / ((numFilas * (numFilas + 1)) / 2);
-    const asientosEnFila = Math.round(totalAsientos * ratio);
-    asientosPorFila.push(Math.min(asientosEnFila, asientosRestantes));
-    asientosRestantes -= asientosPorFila[i];
+  const sortedDiputados = [...diputados].sort((a, b) => {
+    const posA = bloquePositionMap[a.bloque] || 50;
+    const posB = bloquePositionMap[b.bloque] || 50;
+    return posA - posB;
+  });
+
+  const numRows = 8; // Number of concentric rows
+
+  // Calculate how many seats per row, with more seats in outer rows
+  const seatsPerRow = [];
+  let remainingSeats = totalDiputados;
+
+  for (let row = 0; row < numRows; row++) {
+    // Outer rows have more seats proportional to their circumference
+    const rowRadius = innerRadius + (outerRadius - innerRadius) * (row / (numRows - 1));
+    const proportion = rowRadius / innerRadius;
+
+    // Calculate approximate seats for this row
+    let rowSeats = Math.floor(totalDiputados * proportion / (numRows * proportion));
+
+    // Ensure we don't allocate more seats than remaining
+    rowSeats = Math.min(rowSeats, remainingSeats);
+    seatsPerRow.push(rowSeats);
+    remainingSeats -= rowSeats;
   }
 
-  let asientosAsignados = 0;
+  // If we have any remaining seats, add them to the outer rows
+  let currentRow = numRows - 1;
+  while (remainingSeats > 0 && currentRow >= 0) {
+    seatsPerRow[currentRow]++;
+    remainingSeats--;
+    currentRow--;
+  }
 
-  for (let fila = 0; fila < numFilas; fila++) {
-    const radioFila = innerRadius + (outerRadius - innerRadius) * (1 - fila / numFilas);
-    const asientosEnFila = asientosPorFila[fila];
+  // Now distribute the sorted diputados across the rows
+  let diputadoIndex = 0;
 
-    for (let pos = 0; pos < asientosEnFila && asientosAsignados < totalDiputados; pos++) {
-      const angulo = startAngle - (startAngle - endAngle) * (pos / (asientosEnFila - 1 || 1));
+  for (let row = 0; row < numRows; row++) {
+    const rowRadius = innerRadius + (outerRadius - innerRadius) * (row / (numRows - 1));
+    const seatsInThisRow = seatsPerRow[row];
 
-      const x = width / 2 + radioFila * Math.cos(angulo);
-      const y = height - 50 - radioFila * Math.sin(angulo);
+    for (let seat = 0; seat < seatsInThisRow && diputadoIndex < totalDiputados; seat++) {
+      // Calculate angle based on position in this row
+      const angle = startAngle - (seat * (startAngle - endAngle) / (seatsInThisRow - 1 || 1));
 
-      if (asientosAsignados < totalDiputados) {
-        puntos.push({
-          x,
-          y,
-          diputado: diputados[asientosAsignados]
-        });
-        asientosAsignados++;
-      }
+      // Calculate x,y coordinates
+      const x = centerX + rowRadius * Math.cos(angle);
+      const y = centerY - rowRadius * Math.sin(angle);
+
+      puntos.push({
+        x,
+        y,
+        diputado: sortedDiputados[diputadoIndex]
+      });
+
+      diputadoIndex++;
     }
   }
 
   return (
-    <div className="space-y-8">
-      <div className="space-y-4">
-        <h2 className="text-2xl font-bold text-center">Diputados de la Nación Argentina</h2>
+    <div className="space-y-4">
+      <h2 className="text-2xl font-bold text-center">Diputados de la Nación Argentina</h2>
 
-        <p className="text-center text-muted-foreground">
-          {diputados.length} diputados distribuidos en {bloquesOrdenados.length} bloques
-        </p>
+      <p className="text-center text-muted-foreground">
+        {diputados.length} diputados distribuidos en {bloquesOrdenados.length} bloques
+      </p>
 
-        <div className="w-full max-w-xl mx-auto flex justify-center overflow-x-auto">
-          <svg width={width} height="100%" viewBox={`0 0 ${width} ${height}`}>
-            {/* Fondo del semicírculo */}
-            <path
-              d={`M ${width / 2 - outerRadius} ${height - 50} 
-                  A ${outerRadius} ${outerRadius} 0 0 1 ${width / 2 + outerRadius} ${height - 50}
-                  L ${width / 2 + innerRadius} ${height - 50}
-                  A ${innerRadius} ${innerRadius} 0 0 0 ${width / 2 - innerRadius} ${height - 50}
-                  Z`}
-              fill={isDark ? colors.gray[800] : colors.gray[200]}
+      <div className="w-full max-w-xl mx-auto flex justify-center overflow-x-auto">
+        <svg width={width} height={height - 100} viewBox={`0 0 ${width} ${height}`}>
+          {/* Fondo del semicírculo */}
+          <path
+            d={`M ${centerX - outerRadius} ${centerY} 
+                A ${outerRadius} ${outerRadius} 0 0 1 ${centerX + outerRadius} ${centerY}
+                L ${centerX + innerRadius} ${centerY}
+                A ${innerRadius} ${innerRadius} 0 0 0 ${centerX - innerRadius} ${centerY}
+                Z`}
+            fill={isDark ? colors.gray[800] : colors.gray[300]}
+          />
+
+          {/* Dibujar puntos por diputado */}
+          {puntos.map((punto, i) => (
+            <circle
+              key={i}
+              cx={punto.x}
+              cy={punto.y}
+              r={10}
+              fill={bloqueColores[punto.diputado.bloque]}
+              stroke="#fff"
+              strokeWidth={1}
+              data-tooltip-content={`${punto.diputado.nombreCompleto} (${punto.diputado.bloque})`}
             />
-
-            {/* Dibujar puntos por diputado */}
-            {puntos.map((punto, i) => (
-              <circle
-                key={i}
-                cx={punto.x}
-                cy={punto.y}
-                r={6}
-                fill={bloqueColores[punto.diputado.bloque]}
-                stroke="#fff"
-                strokeWidth={1}
-                data-tooltip-content={`${punto.diputado.nombreCompleto} (${punto.diputado.bloque})`}
-              />
-            ))}
-          </svg>
-        </div>
-
-        <div className="w-full max-w-3xl mx-auto flex flex-wrap justify-start sm:justify-center gap-4 mt-4">
-          {bloquesOrdenados.map(bloque => (
-            <div key={bloque} className="flex items-center gap-2 sm:text-center">
-              <div
-                style={{backgroundColor: bloqueColores[bloque]}}
-                className="w-4 h-4 rounded-full"
-              />
-              <span className="text-sm">{bloque} ({bloqueConteo[bloque]})</span>
-            </div>
           ))}
-        </div>
+        </svg>
+      </div>
+
+      <div className="w-full max-w-3xl mx-auto flex flex-wrap justify-start sm:justify-center gap-4 mt-4">
+        {bloquesOrdenados.map(bloque => (
+          <div key={bloque} className="flex items-center gap-2 sm:text-center">
+            <div
+              style={{backgroundColor: bloqueColores[bloque]}}
+              className="w-4 h-4 rounded-full"
+            />
+            <span className="text-sm">{bloque} ({bloqueConteo[bloque]})</span>
+          </div>
+        ))}
       </div>
 
       <div className="flex flex-col items-center sm:flex-row sm:justify-center gap-4">
