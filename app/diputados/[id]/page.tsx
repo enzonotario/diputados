@@ -1,6 +1,6 @@
 import {useParams} from "next/navigation"
 import DiputadoPageContent from "@/app/diputados/[id]/DiputadoPageContent";
-import {getDiputadoById} from "@/lib/api";
+import {getActas, getDiputadoById, getDiputados} from "@/lib/api";
 
 export async function generateMetadata({params}): Promise<Metadata> {
   const {id} = params
@@ -29,6 +29,14 @@ export async function generateMetadata({params}): Promise<Metadata> {
       images: ['/og.png']
     }
   }
+}
+
+export async function generateStaticParams() {
+  const diputados = await getDiputados()
+
+  return diputados.map((diputado) => ({
+    id: diputado.id
+  }))
 }
 
 export default function DiputadoDetailPage({params}) {

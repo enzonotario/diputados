@@ -1,5 +1,5 @@
 import ActaPageContent from "@/app/actas/[id]/ActaPageContent";
-import {getActaById} from "@/lib/api";
+import {getActaById, getActas} from "@/lib/api";
 import {Metadata} from "next";
 
 export async function generateMetadata({params}): Promise<Metadata> {
@@ -29,6 +29,14 @@ export async function generateMetadata({params}): Promise<Metadata> {
       images: ['/og.png']
     }
   }
+}
+
+export async function generateStaticParams() {
+  const actas = await getActas()
+
+  return actas.map((acta) => ({
+    id: acta.id
+  }))
 }
 
 export default function ActaDetailPage({params}) {
