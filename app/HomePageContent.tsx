@@ -4,10 +4,16 @@ import {FileText, LandmarkIcon, Users} from "lucide-react"
 import {RecentVotings} from "@/components/recent-votings"
 import {DiputadosChart} from "@/components/diputados-chart"
 import {Separator} from "@/components/ui/separator";
+import {getActas, getDiputadosPorBloques} from "@/lib/api";
 
-export default function HomePageContent() {
+export default async function HomePageContent() {
+  const {diputados, bloqueColores} = await getDiputadosPorBloques()
+  const actas = (await getActas())
+    .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
+    .slice(0, 9)
+
   return (
-    <div className="container py-10">
+    <div className="page-container">
       <section className="flex flex-col items-center justify-center space-y-4 text-center">
         <LandmarkIcon className="h-16 w-16 text-primary"/>
         <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
@@ -35,13 +41,13 @@ export default function HomePageContent() {
       <Separator className="my-20"/>
 
       <section>
-        <DiputadosChart/>
+        <DiputadosChart diputados={diputados} bloqueColores={bloqueColores}/>
       </section>
 
       <Separator className="my-20"/>
 
       <section>
-        <RecentVotings/>
+        <RecentVotings actas={actas}/>
       </section>
     </div>
   )

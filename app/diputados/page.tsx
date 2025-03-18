@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 export default async function DiputadosPage() {
   const diputados = await getDiputadosConActas()
   return (
-    <DiputadosPageContent diputados={diputados} />
+    <DiputadosPageContent diputados={diputados}/>
   )
 }
 

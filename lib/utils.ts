@@ -1,5 +1,5 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import {type ClassValue, clsx} from "clsx"
+import {twMerge} from "tailwind-merge"
 import type {Diputado, Acta, SortConfig, FilterConfig, Voto} from "@/lib/types"
 
 export function cn(...inputs: ClassValue[]) {

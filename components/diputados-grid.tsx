@@ -1,25 +1,11 @@
 "use client"
 
-import {useTheme} from "next-themes";
 import Link from "next/link";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Card, CardContent} from "@/components/ui/card";
-import {Loader2} from 'lucide-react';
-import {useDiputados} from '@/hooks/use-diputados';
 import {Diputado} from "@/lib/types";
 
-export function DiputadosGrid() {
-  const {diputados, loading, bloqueColores} = useDiputados();
-  const {theme} = useTheme();
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-primary"/>
-      </div>
-    );
-  }
-
+export function DiputadosGrid({diputados, bloqueColores}) {
   const diputadosPorBloque: Record<string, Diputado[]> = {};
   diputados.forEach(diputado => {
     if (!diputadosPorBloque[diputado.bloque]) {

@@ -1,5 +1,5 @@
 import ActaPageContent from "@/app/actas/[id]/ActaPageContent";
-import {getActaById, getActas, getActaWithDiputadosById, getDiputadosConActas} from "@/lib/api";
+import {getActaById, getActas, getActaWithDiputadosById} from "@/lib/api";
 import {Metadata} from "next";
 
 export async function generateMetadata({params}): Promise<Metadata> {
@@ -43,7 +43,7 @@ export default async function ActaDetailPage({params}) {
   const acta = await getActaWithDiputadosById(params.id)
 
   return (
-    <ActaPageContent acta={acta} />
+    <ActaPageContent acta={acta}/>
   )
 }
 

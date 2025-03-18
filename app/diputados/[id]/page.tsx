@@ -1,6 +1,5 @@
-import {useParams} from "next/navigation"
 import DiputadoPageContent from "@/app/diputados/[id]/DiputadoPageContent";
-import {getActas, getDiputadoById, getDiputados, getDiputadosConActas} from "@/lib/api";
+import {getDiputadoById, getDiputados, getDiputadosConActas} from "@/lib/api";
 
 export async function generateMetadata({params}): Promise<Metadata> {
   const {id} = params
@@ -45,7 +44,7 @@ export default async function DiputadoDetailPage({params}) {
   const diputado = diputados.find((diputado) => diputado.id === params.id)
 
   return (
-    <DiputadoPageContent diputado={diputado} />
+    <DiputadoPageContent diputado={diputado}/>
   )
 }
 

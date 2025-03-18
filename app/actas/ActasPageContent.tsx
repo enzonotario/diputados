@@ -10,22 +10,22 @@ import {Badge} from "@/components/ui/badge"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
 
-export default function ActasPageContent({actas}: {actas: Acta[]}) {
+export default function ActasPageContent({actas}: { actas: Acta[] }) {
   const router = useRouter()
-  const [sortKey, setSortKey] = useQueryState('sort', { defaultValue: 'fecha' })
-  const [sortDir, setSortDir] = useQueryState('dir', { defaultValue: 'desc' })
-  const [yearFilter, setYearFilter] = useQueryState('year', { defaultValue: '' })
-  const [resultadoFilter, setResultadoFilter] = useQueryState('resultado', { defaultValue: 'all' })
-  const [searchQuery, setSearchQuery] = useQueryState('q', { defaultValue: '' })
+  const [sortKey, setSortKey] = useQueryState('sort', {defaultValue: 'fecha'})
+  const [sortDir, setSortDir] = useQueryState('dir', {defaultValue: 'desc'})
+  const [yearFilter, setYearFilter] = useQueryState('year', {defaultValue: ''})
+  const [resultadoFilter, setResultadoFilter] = useQueryState('resultado', {defaultValue: 'all'})
+  const [searchQuery, setSearchQuery] = useQueryState('q', {defaultValue: ''})
 
-  const sortConfig: SortConfig = { key: sortKey, direction: sortDir as "asc" | "desc" }
+  const sortConfig: SortConfig = {key: sortKey, direction: sortDir as "asc" | "desc"}
   const filters: FilterConfig = {
     ...(yearFilter && yearFilter !== "todos" ? {
       fechaStart: `${yearFilter}-01-01`,
       fechaEnd: `${yearFilter}-12-31`
     } : {}),
-    ...(resultadoFilter && resultadoFilter !== "all" ? { resultado: resultadoFilter } : {}),
-    ...(searchQuery ? { titulo: searchQuery, resultado: searchQuery } : {})
+    ...(resultadoFilter && resultadoFilter !== "all" ? {resultado: resultadoFilter} : {}),
+    ...(searchQuery ? {titulo: searchQuery} : {})
   }
 
   const handleSort = (key: string, direction: "asc" | "desc") => {
@@ -96,7 +96,7 @@ export default function ActasPageContent({actas}: {actas: Acta[]}) {
   ]
 
   return (
-    <div className="container py-10">
+    <div className="page-container">
       <h1 className="text-3xl font-bold mb-6">Actas de Votación</h1>
       <Tabs value={yearFilter || "todos"} onValueChange={handleYearChange} className="mb-6">
         <TabsList className="w-full">
@@ -109,7 +109,7 @@ export default function ActasPageContent({actas}: {actas: Acta[]}) {
                 </TabsTrigger>
               ))}
             </div>
-            <ScrollBar orientation="horizontal" />
+            <ScrollBar orientation="horizontal"/>
           </ScrollArea>
         </TabsList>
       </Tabs>
@@ -122,7 +122,7 @@ export default function ActasPageContent({actas}: {actas: Acta[]}) {
           onSort={handleSort}
           onSearchChange={handleSearchChange}
           searchable
-          searchKeys={["titulo", "resultado"]}
+          searchKeys={["titulo"]}
           onRowClick={(acta) => router.push(`/actas/${acta.id}`)}
           emptyMessage="No se encontraron actas con los filtros aplicados."
           additionalFilters={(
@@ -132,7 +132,7 @@ export default function ActasPageContent({actas}: {actas: Acta[]}) {
                 onValueChange={handleResultadoChange}
               >
                 <SelectTrigger id="resultado">
-                  <SelectValue placeholder="Seleccionar resultado" />
+                  <SelectValue placeholder="Seleccionar resultado"/>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos los resultados</SelectItem>

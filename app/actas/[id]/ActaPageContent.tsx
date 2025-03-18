@@ -22,7 +22,7 @@ export default function ActaPageContent({acta}: { acta: Acta | null }) {
 
   if (!acta) {
     return (
-      <div className="container py-10">
+      <div className="page-container">
         <Card>
           <CardHeader>
             <CardTitle>Acta no encontrada</CardTitle>
@@ -119,16 +119,21 @@ export default function ActaPageContent({acta}: { acta: Acta | null }) {
   ]
 
   return (
-    <div className="container flex flex-col py-10 gap-10">
+    <div className="page-container flex flex-col gap-10">
       <Card>
         <CardHeader>
           <div className="flex justify-between items-start">
             <div>
               <CardTitle className="text-2xl">{acta.titulo}</CardTitle>
             </div>
-            <Badge variant={acta.resultado === "afirmativo" ? "teal" : "red"} className="text-base py-1 px-3">
-              {acta.resultado}
-            </Badge>
+            <div className="flex flex-col justify-center items-center gap-0.5">
+              <span className="text-xs text-muted-foreground">Resultado</span>
+              <Badge variant={acta.resultado === "afirmativo" ? "teal" : "red"}
+                     className="text-base py-1 px-3 capitalize">
+                {acta.resultado}
+              </Badge>
+            </div>
+
           </div>
         </CardHeader>
         <CardContent>
@@ -248,7 +253,7 @@ export default function ActaPageContent({acta}: { acta: Acta | null }) {
             </div>
           </CardContent>
           <div className="flex-1"></div>
-          <VotacionesProgress acta={acta}/>
+          <VotacionesProgress acta={acta} resultado={acta.resultado}/>
         </Card>
       </div>
 

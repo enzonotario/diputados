@@ -3,22 +3,12 @@
 import {useTheme} from "next-themes";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
-import {Loader2, Users} from 'lucide-react';
-import {useDiputados} from '@/hooks/use-diputados';
+import {Users} from 'lucide-react';
 import {Diputado} from "@/lib/types";
 import colors from "tailwind-colors";
 
-export function DiputadosChart() {
-  const {diputados, loading, bloqueColores} = useDiputados();
+export function DiputadosChart({diputados, bloqueColores}: {diputados: Diputado[], bloqueColores: Record<string, string>}) {
   const isDark = useTheme().theme === "dark";
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-primary"/>
-      </div>
-    );
-  }
 
   const bloqueConteo: Record<string, number> = {};
   diputados.forEach(d => {

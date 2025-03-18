@@ -11,7 +11,7 @@ import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {Badge} from "@/components/ui/badge"
 import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
 
-export default function DiputadosPageContent({diputados}: {diputados: Diputado[]}) {
+export default function DiputadosPageContent({diputados}: { diputados: Diputado[] }) {
   const router = useRouter()
   const [sortKey, setSortKey] = useQueryState('sort', {defaultValue: 'estadisticas.presentismo'})
   const [sortDir, setSortDir] = useQueryState('dir', {defaultValue: 'desc'})
@@ -120,7 +120,7 @@ export default function DiputadosPageContent({diputados}: {diputados: Diputado[]
   ]
 
   return (
-    <div className="container py-10 space-y-6">
+    <div className="page-container space-y-6">
       <h1 className="text-3xl font-bold mb-6">Diputados de Argentina</h1>
 
       <FilterSidebar filters={filters} onFilterChange={handleFilterChange} filterOptions={filterOptions}/>

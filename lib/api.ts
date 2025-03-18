@@ -1,7 +1,8 @@
 import type {Acta, Diputado, Voto} from "@/lib/types"
 import {collect} from "collect.js"
-import {calcularEstadisticasDiputado} from "@/lib/utils";
+import {calcularEstadisticasDiputado, isDiputadoActivo} from "@/lib/utils";
 import sluggo from "sluggo"
+import colors from "tailwind-colors";
 
 const API_BASE_URL = "https://api.argentinadatos.com/v1/diputados"
 
@@ -223,4 +224,59 @@ export async function getActaWithDiputadosById(id: string): Promise<Acta | null>
     console.error(`Error fetching acta with id ${id}:`, error)
     return null
   }
+}
+
+const generarColorPorBloque = () => {
+  const coloresPreasignados: Record<string, string> = {
+    "Movimiento Popular  Neuquino": colors.blue[500],
+    "La Libertad Avanza": colors.purple[500],
+    "Independencia": colors.red[500],
+    "Hacemos Coalicion Federal": colors.green[500],
+    "Frente de Izquierda y de Trabajadores Unidad": colors.blue[400],
+    "Sin Bloque": colors.gray[500],
+    "Produccion y Trabajo": colors.yellow[500],
+    "Pro": colors.yellow[500],
+    "Ucr - Union Civica Radical": colors.red[500],
+    "Union por la Patria": colors.blue[500],
+    "Creo": colors.blue[500],
+    "La Union Mendocina": colors.blue[500],
+    "Innovacion Federal": colors.blue[300],
+    "Buenos Aires Libre": colors.blue[200],
+    "Por Santa Cruz": colors.blue[600],
+    "Avanza Libertad": colors.purple[600]
+  };
+
+  const coloresBase = [
+    "#e57373", "#f06292", "#ba68c8", "#9575cd",
+    "#7986cb", "#64b5f6", "#4fc3f7", "#4dd0e1",
+    "#4db6ac", "#81c784", "#aed581", "#dce775",
+    "#fff176", "#ffd54f", "#ffb74d", "#ff8a65"
+  ];
+
+  let indiceColor = 0;
+  return (bloque: string) => {
+    if (coloresPreasignados[bloque]) {
+      return coloresPreasignados[bloque];
+    }
+
+    const color = coloresBase[indiceColor % coloresBase.length];
+    indiceColor++;
+    return color;
+  };
+};
+
+export async function getDiputadosPorBloques() {
+  const diputados = (await getDiputados()).filter(isDiputadoActivo);
+  const bloqueColores: Record<string, string> = {};
+  const getColor = generarColorPorBloque();
+
+  const bloques = [...new Set(diputados.map(d => d.bloque))];
+  bloques.forEach(bloque => {
+    bloqueColores[bloque] = getColor(bloque);
+  })
+
+  return {
+    diputados,
+    bloqueColores,
+  };
 }
