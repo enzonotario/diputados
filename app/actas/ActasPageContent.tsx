@@ -1,37 +1,22 @@
 "use client"
 
-import {useEffect, useState} from "react"
 import {useRouter} from "next/navigation"
-import { useQueryState } from 'nuqs'
-import {getActas} from "@/lib/api"
+import {useQueryState} from 'nuqs'
 import type {Acta, FilterConfig, SortConfig} from "@/lib/types"
 import {filterActas, formatDate, getUniqueValues, getYearsFromActas, sortActas} from "@/lib/utils"
 import {DataTable} from "@/components/data-table"
 import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs"
 import {Badge} from "@/components/ui/badge"
-import {Loader2, Scroll} from "lucide-react"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
 
-export default function ActasPageContent() {
+export default function ActasPageContent({actas}: {actas: Acta[]}) {
   const router = useRouter()
   const [sortKey, setSortKey] = useQueryState('sort', { defaultValue: 'fecha' })
   const [sortDir, setSortDir] = useQueryState('dir', { defaultValue: 'desc' })
   const [yearFilter, setYearFilter] = useQueryState('year', { defaultValue: '' })
   const [resultadoFilter, setResultadoFilter] = useQueryState('resultado', { defaultValue: 'all' })
   const [searchQuery, setSearchQuery] = useQueryState('q', { defaultValue: '' })
-  const [actas, setActas] = useState<Acta[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true)
-      const data = await getActas()
-      setActas(data)
-      setLoading(false)
-    }
-    fetchData()
-  }, [])
 
   const sortConfig: SortConfig = { key: sortKey, direction: sortDir as "asc" | "desc" }
   const filters: FilterConfig = {
@@ -130,45 +115,37 @@ export default function ActasPageContent() {
       </Tabs>
 
       <div className="grid grid-cols-1 gap-6">
-        <div className="">
-          {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <DataTable
+          data={sortedActas}
+          columns={columns}
+          sortConfig={sortConfig}
+          onSort={handleSort}
+          onSearchChange={handleSearchChange}
+          searchable
+          searchKeys={["titulo", "resultado"]}
+          onRowClick={(acta) => router.push(`/actas/${acta.id}`)}
+          emptyMessage="No se encontraron actas con los filtros aplicados."
+          additionalFilters={(
+            <div className="flex px-2 gap-2">
+              <Select
+                value={resultadoFilter}
+                onValueChange={handleResultadoChange}
+              >
+                <SelectTrigger id="resultado">
+                  <SelectValue placeholder="Seleccionar resultado" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos los resultados</SelectItem>
+                  {resultados.map((resultado) => (
+                    <SelectItem key={resultado} value={resultado}>
+                      {resultado}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          ) : (
-            <DataTable
-              data={sortedActas}
-              columns={columns}
-              sortConfig={sortConfig}
-              onSort={handleSort}
-              onSearchChange={handleSearchChange}
-              searchable
-              searchKeys={["titulo", "resultado"]}
-              onRowClick={(acta) => router.push(`/actas/${acta.id}`)}
-              emptyMessage="No se encontraron actas con los filtros aplicados."
-              additionalFilters={(
-                <div className="flex px-2 gap-2">
-                  <Select
-                    value={resultadoFilter}
-                    onValueChange={handleResultadoChange}
-                  >
-                    <SelectTrigger id="resultado">
-                      <SelectValue placeholder="Seleccionar resultado" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Todos los resultados</SelectItem>
-                      {resultados.map((resultado) => (
-                        <SelectItem key={resultado} value={resultado}>
-                          {resultado}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-            />
           )}
-        </div>
+        />
       </div>
     </div>
   )

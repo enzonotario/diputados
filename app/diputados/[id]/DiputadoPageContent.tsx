@@ -1,57 +1,22 @@
 "use client"
 
-import {useEffect, useState} from "react"
+import {useState} from "react"
 import {useRouter} from "next/navigation"
-import {getDiputadosConActas} from "@/lib/api"
 import type {Acta, Diputado, SortConfig} from "@/lib/types"
 import {formatDate, sortActas} from "@/lib/utils"
 import {DataTable} from "@/components/data-table"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {Badge} from "@/components/ui/badge"
-import {AlertCircle, CheckCircle, Loader2, MinusCircle, XCircle} from "lucide-react"
+import {AlertCircle, CheckCircle, MinusCircle, XCircle} from "lucide-react"
 import {Progress} from "@/components/ui/progress"
 
-export default function DiputadoPageContent({id}: {id: string}) {
+export default function DiputadoPageContent({diputado}: {diputado: Diputado}) {
   const router = useRouter()
-  const [diputado, setDiputado] = useState<Diputado | null>(null)
-  const [estadisticas, setEstadisticas] = useState<Diputado["estadisticas"] | null>(null)
-  const [actas, setActas] = useState<Acta[]>([])
-  const [loading, setLoading] = useState(true)
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: "fecha", direction: "desc" })
-
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true)
-
-      const diputados = await getDiputadosConActas()
-
-      const diputado = diputados.find((diputado) => diputado.id === id) || null
-
-      setDiputado(diputado)
-
-      const actasDiputado = diputado?.actasDiputado || []
-      setActas(actasDiputado)
-
-      if (diputado) {
-        setEstadisticas(diputado.estadisticas)
-      }
-
-      setLoading(false)
-    }
-    fetchData()
-  }, [id])
 
   const handleSort = (key: string, direction: "asc" | "desc") => {
     setSortConfig({ key, direction })
-  }
-
-  if (loading) {
-    return (
-      <div className="container py-10 flex justify-center items-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    )
   }
 
   if (!diputado) {
@@ -67,7 +32,7 @@ export default function DiputadoPageContent({id}: {id: string}) {
     )
   }
 
-  const actasSorted = sortActas(actas, sortConfig)
+  const actasSorted = sortActas(diputado.actasDiputado || [], sortConfig)
 
   const columnasVotaciones = [
     {
@@ -165,21 +130,21 @@ export default function DiputadoPageContent({id}: {id: string}) {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4">
-            {estadisticas && (<div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {diputado.estadisticas && (<div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <div className="grid sm:grid-cols-3 gap-4">
                 <div className="rounded-lg border p-3 bg-teal-50 dark:bg-teal-950">
                   <div className="text-3xl font-bold text-teal-600 dark:text-teal-400">
-                    {estadisticas.votosAfirmativos}
+                    {diputado.estadisticas.votosAfirmativos}
                   </div>
                   <div className="text-sm font-medium text-muted-foreground">Votos Afirmativos</div>
                 </div>
                 <div className="rounded-lg border p-3 bg-red-50 dark:bg-red-950">
-                  <div className="text-3xl font-bold text-red-600 dark:text-red-400">{estadisticas.votosNegativos}</div>
+                  <div className="text-3xl font-bold text-red-600 dark:text-red-400">{diputado.estadisticas.votosNegativos}</div>
                   <div className="text-sm font-medium text-muted-foreground">Votos Negativos</div>
                 </div>
                 <div className="rounded-lg border p-3 bg-yellow-50 dark:bg-yellow-950">
                   <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
-                    {estadisticas.abstenciones}
+                    {diputado.estadisticas.abstenciones}
                   </div>
                   <div className="text-sm font-medium text-muted-foreground">Abstenciones</div>
                 </div>
@@ -189,13 +154,13 @@ export default function DiputadoPageContent({id}: {id: string}) {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="rounded-lg border p-3">
                     <div className="text-sm font-medium text-muted-foreground">Total Votaciones</div>
-                    <div className="text-2xl font-bold">{estadisticas.totalVotaciones}</div>
+                    <div className="text-2xl font-bold">{diputado.estadisticas.totalVotaciones}</div>
                   </div>
 
                   <div className="rounded-lg border p-3 bg-gray-50 dark:bg-gray-950">
                     <div className="text-sm font-medium text-muted-foreground">Ausencias</div>
                     <div className="text-2xl font-bold text-gray-600 dark:text-gray-400">
-                      {estadisticas.ausencias}
+                      {diputado.estadisticas.ausencias}
                     </div>
                   </div>
                 </div>
@@ -203,9 +168,9 @@ export default function DiputadoPageContent({id}: {id: string}) {
                 <div>
                   <div className="flex justify-between mb-2">
                     <span className="text-sm font-medium">Presentismo</span>
-                    <span className="text-sm font-medium">{estadisticas.presentismo}%</span>
+                    <span className="text-sm font-medium">{diputado.estadisticas.presentismo}%</span>
                   </div>
-                  <Progress value={estadisticas.presentismo} className="h-2" />
+                  <Progress value={diputado.estadisticas.presentismo} className="h-2" />
                 </div>
               </div>
             </div>)}

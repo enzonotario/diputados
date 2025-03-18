@@ -29,13 +29,21 @@ const diputadosAliases = [
   },
 ]
 
+let diputados
+let actas
+let diputadosConActas
+
 export async function getDiputados(): Promise<Diputado[]> {
+  if (diputados) {
+    return diputados
+  }
+
   try {
     const response = await fetch(`${API_BASE_URL}/diputados`)
     if (!response.ok) {
       throw new Error(`Error fetching diputados: ${response.statusText}`)
     }
-    return collect(await response.json())
+    diputados = collect(await response.json())
       .sortBy("id")
       .sortByDesc("periodoMandato.inicio")
       .sortByDesc("periodoBloque.inicio")
@@ -46,6 +54,8 @@ export async function getDiputados(): Promise<Diputado[]> {
         nombreCompleto: `${diputado.apellido}, ${diputado.nombre}`,
       }))
       .toArray() as Diputado[]
+
+    return diputados
   } catch (error) {
     console.error("Error fetching diputados:", error)
     return []
@@ -63,15 +73,21 @@ export async function getDiputadoById(id: string): Promise<Diputado | null> {
 }
 
 export async function getActas(): Promise<Acta[]> {
+  if (actas) {
+    return actas
+  }
+
   try {
     const response = await fetch(`${API_BASE_URL}/actas`)
     if (!response.ok) {
       throw new Error(`Error fetching actas: ${response.statusText}`)
     }
-    return (await response.json()).map((acta: Acta) => ({
+    actas = (await response.json()).map((acta: Acta) => ({
       ...acta,
       votos: acta.votos.filter((voto) => voto.tipoVoto !== "presidente")
     }))
+
+    return actas
   } catch (error) {
     console.error("Error fetching actas:", error)
     return []
@@ -89,6 +105,10 @@ export async function getActaById(id: string): Promise<Acta | null> {
 }
 
 export async function getDiputadosConActas(): Promise<Diputado[]> {
+  if (diputadosConActas) {
+    return diputadosConActas
+  }
+
   try {
     const diputados = (await getDiputados()).map((diputado) => ({
       ...diputado,
@@ -103,7 +123,7 @@ export async function getDiputadosConActas(): Promise<Diputado[]> {
       } as Voto)),
     }))
 
-    return diputados
+    diputadosConActas = diputados
       .map((diputado) => {
         const actasDiputado = actas
           .filter((acta) => acta.votos.some((voto) => voto.diputadoSlug === diputado.nombreSlug) || acta.votos.some((voto) => {
@@ -129,6 +149,8 @@ export async function getDiputadosConActas(): Promise<Diputado[]> {
         const estadisticas = calcularEstadisticasDiputado(actasDiputado)
         return {...diputado, estadisticas, actasDiputado}
       })
+
+    return diputadosConActas
   } catch (error) {
     console.error("Error fetching diputados con actas:", error)
     return []

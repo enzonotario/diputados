@@ -1,5 +1,6 @@
 import DiputadosPageContent from "@/app/diputados/DiputadosPageContent";
 import {Metadata} from "next";
+import {getDiputadosConActas} from "@/lib/api";
 
 export const metadata: Metadata = {
   title: "Diputados | diputados.argentinadatos.com",
@@ -22,9 +23,10 @@ export const metadata: Metadata = {
   }
 }
 
-export default function DiputadosPage() {
+export default async function DiputadosPage() {
+  const diputados = await getDiputadosConActas()
   return (
-    <DiputadosPageContent />
+    <DiputadosPageContent diputados={diputados} />
   )
 }
 

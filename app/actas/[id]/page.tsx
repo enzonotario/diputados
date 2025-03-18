@@ -1,5 +1,5 @@
 import ActaPageContent from "@/app/actas/[id]/ActaPageContent";
-import {getActaById, getActas} from "@/lib/api";
+import {getActaById, getActas, getActaWithDiputadosById, getDiputadosConActas} from "@/lib/api";
 import {Metadata} from "next";
 
 export async function generateMetadata({params}): Promise<Metadata> {
@@ -39,11 +39,11 @@ export async function generateStaticParams() {
   }))
 }
 
-export default function ActaDetailPage({params}) {
-  const {id} = params
+export default async function ActaDetailPage({params}) {
+  const acta = await getActaWithDiputadosById(params.id)
 
   return (
-    <ActaPageContent id={id} />
+    <ActaPageContent acta={acta} />
   )
 }
 

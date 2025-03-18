@@ -1,9 +1,7 @@
 "use client"
 
-import {useEffect, useState} from "react"
 import {useRouter} from "next/navigation"
 import {useQueryState} from 'nuqs'
-import {getDiputadosConActas} from "@/lib/api"
 import type {Diputado, FilterConfig, SortConfig} from "@/lib/types"
 import {filterDiputados, formatDate, getUniqueValues, isDiputadoActivo, sortDiputados} from "@/lib/utils"
 import {DataTable} from "@/components/data-table"
@@ -11,10 +9,9 @@ import {FilterSidebar} from "@/components/filter-sidebar"
 import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {Badge} from "@/components/ui/badge"
-import {Loader2} from "lucide-react"
 import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
 
-export default function DiputadosPageContent() {
+export default function DiputadosPageContent({diputados}: {diputados: Diputado[]}) {
   const router = useRouter()
   const [sortKey, setSortKey] = useQueryState('sort', {defaultValue: 'estadisticas.presentismo'})
   const [sortDir, setSortDir] = useQueryState('dir', {defaultValue: 'desc'})
@@ -23,19 +20,6 @@ export default function DiputadosPageContent() {
   const [bloqueFilter, setBloqueFilter] = useQueryState('bloque', {defaultValue: ''})
   const [generoFilter, setGeneroFilter] = useQueryState('genero', {defaultValue: ''})
   const [searchQuery, setSearchQuery] = useQueryState('q', {defaultValue: ''})
-  const [diputados, setDiputados] = useState<Diputado[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true)
-      const diputados = await getDiputadosConActas()
-      setDiputados(diputados)
-      setLoading(false)
-    }
-
-    fetchData()
-  }, [])
 
   const sortConfig: SortConfig = {key: sortKey, direction: sortDir as "asc" | "desc"}
   const filters: FilterConfig = {
@@ -153,23 +137,17 @@ export default function DiputadosPageContent() {
         </ScrollArea>
       </Tabs>
 
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-primary"/>
-        </div>
-      ) : (
-        <DataTable
-          data={displayedDiputados}
-          columns={columns}
-          sortConfig={sortConfig}
-          onSort={handleSort}
-          onSearchChange={handleSearchChange}
-          searchable
-          searchKeys={["nombre", "apellido", "provincia", "bloque"]}
-          onRowClick={(diputado) => router.push(`/diputados/${diputado.id}`)}
-          emptyMessage={`No se encontraron diputados ${activeTabState === "activos" ? "activos" : "inactivos"} con los filtros aplicados.`}
-        />
-      )}
+      <DataTable
+        data={displayedDiputados}
+        columns={columns}
+        sortConfig={sortConfig}
+        onSort={handleSort}
+        onSearchChange={handleSearchChange}
+        searchable
+        searchKeys={["nombre", "apellido", "provincia", "bloque"]}
+        onRowClick={(diputado) => router.push(`/diputados/${diputado.id}`)}
+        emptyMessage={`No se encontraron diputados ${activeTabState === "activos" ? "activos" : "inactivos"} con los filtros aplicados.`}
+      />
     </div>
   )
 }

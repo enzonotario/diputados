@@ -1,5 +1,6 @@
 import ActasPageContent from "@/app/actas/ActasPageContent";
 import {Metadata} from "next";
+import {getActas} from "@/lib/api";
 
 export const metadata: Metadata = {
   title: "Actas | diputados.argentinadatos.com",
@@ -22,9 +23,11 @@ export const metadata: Metadata = {
   }
 }
 
-export default function ActasPage() {
+export default async function ActasPage() {
+  const actas = await getActas()
+
   return (
-    <ActasPageContent></ActasPageContent>
+    <ActasPageContent actas={actas}></ActasPageContent>
   )
 }
 

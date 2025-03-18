@@ -1,47 +1,23 @@
 "use client"
 
-import {useEffect, useState} from "react"
+import {useState} from "react"
 import {useRouter} from "next/navigation"
-import {getActaWithDiputadosById} from "@/lib/api"
 import type {Acta, Diputado, SortConfig, Voto} from "@/lib/types"
-import {formatDate, sortDiputados, sortVotos} from "@/lib/utils"
+import {formatDate, sortDiputados} from "@/lib/utils"
 import {DataTable} from "@/components/data-table"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {Badge} from "@/components/ui/badge"
-import {AlertCircle, CheckCircle, Loader2, MinusCircle, User, XCircle} from "lucide-react"
+import {AlertCircle, CheckCircle, MinusCircle, User, XCircle} from "lucide-react"
 import {Progress} from "@/components/ui/progress";
 import {VotacionesProgress} from "@/components/votaciones-progress";
 
-export default function ActaPageContent({id}: { id: string }) {
+export default function ActaPageContent({acta}: { acta: Acta | null }) {
   const router = useRouter()
-  const [acta, setActa] = useState<Acta | null>(null)
-  const [loading, setLoading] = useState(true)
   const [sortConfig, setSortConfig] = useState<SortConfig>({key: "nombreCompleto", direction: "asc"})
-
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true)
-
-      const actaData = await getActaWithDiputadosById(id)
-
-      setActa(actaData)
-
-      setLoading(false)
-    }
-    fetchData()
-  }, [id])
 
   const handleSort = (key: string, direction: "asc" | "desc") => {
     setSortConfig({key, direction})
-  }
-
-  if (loading) {
-    return (
-      <div className="container py-10 flex justify-center items-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary"/>
-      </div>
-    )
   }
 
   if (!acta) {
