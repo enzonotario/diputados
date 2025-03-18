@@ -10,6 +10,8 @@ import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {Badge} from "@/components/ui/badge"
 import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
+import Link from "next/link";
+import {Button} from "@/components/ui/button";
 
 export default function DiputadosPageContent({diputados}: { diputados: Diputado[] }) {
   const router = useRouter()
@@ -121,7 +123,12 @@ export default function DiputadosPageContent({diputados}: { diputados: Diputado[
 
   return (
     <div className="page-container space-y-6">
-      <h1 className="text-3xl font-bold mb-6">Diputados de Argentina</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold">Diputados de Argentina</h1>
+        <Link href="/diputados/bloques">
+          <Button variant="outline">Ver por Bloques</Button>
+        </Link>
+      </div>
 
       <FilterSidebar filters={filters} onFilterChange={handleFilterChange} filterOptions={filterOptions}/>
 
