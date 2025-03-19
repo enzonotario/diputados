@@ -51,11 +51,11 @@ export function RecentVotings({actas}: {actas: Acta[]}) {
                       <span>Negativos</span>
                       <span>{((acta.votosNegativos / acta.votos.length) * 100).toFixed(0)}% ({acta.votosNegativos})</span>
                     </div>
-                    <div className="flex flex-col items-center justify-center text-yellow-800 dark:text-yellow-300">
+                    <div className="flex flex-col items-center justify-center text-blue-800 dark:text-blue-300">
                       <span>Abstenciones</span>
                       <span>{((acta.abstenciones / acta.votos.length) * 100).toFixed(0)}% ({acta.abstenciones})</span>
                     </div>
-                    <div className="flex flex-col items-center justify-center text-gray-800 dark:text-gray-300">
+                    <div className="flex flex-col items-center justify-center text-yellow-800 dark:text-yellow-300">
                       <span>Ausentes</span>
                       <span>{((acta.ausentes / acta.votos.length) * 100).toFixed(0)}% ({acta.ausentes})</span>
                     </div>

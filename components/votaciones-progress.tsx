@@ -22,10 +22,10 @@ export function VotacionesProgress<T>({
              className={`h-2 ${resultado === 'negativo' ? 'bg-red-500 dark:bg-red-400' : 'bg-red-100 dark:bg-red-950'}`}
         ></div>
         <div style={{width: `${(acta.abstenciones / acta.votos.length) * 100}%`}}
-             className="h-2 bg-yellow-100 dark:bg-yellow-950"
+             className="h-2 bg-blue-100 dark:bg-blue-950"
         ></div>
         <div style={{width: `${(acta.ausentes / acta.votos.length) * 100}%`}}
-             className="h-2 bg-gray-100 dark:bg-gray-900"
+             className="h-2 bg-yellow-100 dark:bg-yellow-900"
         ></div>
       </div>
   )

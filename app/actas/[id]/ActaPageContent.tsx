@@ -95,8 +95,8 @@ export default function ActaPageContent({acta}: { acta: Acta | null }) {
           case "abstencion":
             return (
               <div className="flex items-center gap-2">
-                <MinusCircle className="h-5 w-5 text-yellow-500"/>
-                <span className="text-sm font-medium text-yellow-800 dark:text-yellow-200">Abstención</span>
+                <MinusCircle className="h-5 w-5 text-blue-500"/>
+                <span className="text-sm font-medium text-blue-800 dark:text-blue-200">Abstención</span>
               </div>
             )
           case "ausente":
@@ -177,7 +177,7 @@ export default function ActaPageContent({acta}: { acta: Acta | null }) {
                 </div>
                 <div className="bg-muted p-4 rounded-lg text-center">
                   <span className="text-xl md:text-3xl font-bold text-red-700 dark:text-red-400">{ausentes}</span>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">Ausentes</p>
+                  <p className="text-sm text-yellow-800 dark:text-yellow-200">Ausentes</p>
                 </div>
               </div>
 
@@ -225,7 +225,7 @@ export default function ActaPageContent({acta}: { acta: Acta | null }) {
                 </div>
                 <div className="bg-muted p-4 rounded-lg text-center">
                   <span
-                    className="text-xl md:text-3xl font-bold text-orange-700 dark:text-orange-400">{abstenciones}</span>
+                    className="text-xl md:text-3xl font-bold text-blue-700 dark:text-blue-400">{abstenciones}</span>
                   <p className="text-sm text-gray-500">Abstenciones</p>
                 </div>
               </div>
@@ -246,7 +246,7 @@ export default function ActaPageContent({acta}: { acta: Acta | null }) {
                 {[...Array(abstenciones)].map((_, i) => (
                   <MinusCircle
                     key={`abstencion-${i}`}
-                    className="size-3 md:size-4 text-orange-500 dark:text-orange-400"
+                    className="size-3 md:size-4 text-blue-500 dark:text-blue-400"
                   />
                 ))}
               </div>

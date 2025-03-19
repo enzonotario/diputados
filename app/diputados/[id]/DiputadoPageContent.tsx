@@ -72,8 +72,8 @@ export default function DiputadoPageContent({diputado}: { diputado: Diputado }) 
             </div>
           case "abstencion":
             return <div className="flex items-center gap-2">
-              <MinusCircle className="h-5 w-5 text-yellow-500"/>
-              <span className="text-sm font-medium text-yellow-800 dark:text-yellow-200">Abstención</span>
+              <MinusCircle className="h-5 w-5 text-blue-500"/>
+              <span className="text-sm font-medium text-blue-800 dark:text-blue-200">Abstención</span>
             </div>
 
           default:
@@ -157,8 +157,8 @@ export default function DiputadoPageContent({diputado}: { diputado: Diputado }) 
                         className="text-3xl font-bold text-red-600 dark:text-red-400">{diputado.estadisticas.votosNegativos}</div>
                       <div className="text-sm font-medium text-muted-foreground">Votos Negativos</div>
                     </div>
-                    <div className="rounded-lg border p-3 bg-yellow-50 dark:bg-yellow-950">
-                      <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
+                    <div className="rounded-lg border p-3 bg-blue-50 dark:bg-blue-950">
+                      <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                         {diputado.estadisticas.abstenciones}
                       </div>
                       <div className="text-sm font-medium text-muted-foreground">Abstenciones</div>
