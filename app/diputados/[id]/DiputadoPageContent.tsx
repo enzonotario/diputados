@@ -89,12 +89,12 @@ export default function DiputadoPageContent({diputado}: { diputado: Diputado }) 
   return (
     <div className="page-container flex flex-col gap-10">
       <Card>
-        <CardContent className="px-0 py-0">
+        <CardContent className="px-0 py-0 overflow-hidden">
           <div className="flex flex-col md:flex-row">
             <div className="w-full max-w-xs mx-auto lg:mx-0 md:max-w-sm flex flex-col justify-end">
               {
                 diputado.foto ? (
-                  <Avatar className="w-full h-full max-h-96 rounded-none rounded-l-lg">
+                  <Avatar className="w-full h-full max-h-96 rounded-none">
                     <AvatarImage
                       src={diputado.foto}
                       alt={`${diputado.nombre} ${diputado.apellido}`}
