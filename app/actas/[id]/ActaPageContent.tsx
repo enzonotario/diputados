@@ -1,9 +1,8 @@
 "use client"
 
-import {useState} from "react"
 import {useRouter} from "next/navigation"
-import type {Acta, Diputado, SortConfig, Voto} from "@/lib/types"
-import {formatDate, sortDiputados} from "@/lib/utils"
+import type {Acta, Diputado, FilterConfig, SortConfig, Voto} from "@/lib/types"
+import {filterDiputados, formatDate, getUniqueValues, sortDiputados} from "@/lib/utils"
 import {DataTable} from "@/components/data-table"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
@@ -11,13 +10,28 @@ import {Badge} from "@/components/ui/badge"
 import {AlertCircle, CheckCircle, MinusCircle, User, XCircle} from "lucide-react"
 import {Progress} from "@/components/ui/progress";
 import {VotacionesProgress} from "@/components/votaciones-progress";
+import {FilterSidebar} from "@/components/filter-sidebar";
+import {useQueryState} from "nuqs";
+import {useState} from "react";
 
 export default function ActaPageContent({acta}: { acta: Acta | null }) {
   const router = useRouter()
-  const [sortConfig, setSortConfig] = useState<SortConfig>({key: "nombreCompleto", direction: "asc"})
+  const [sortKey, setSortKey] = useQueryState('sort', {defaultValue: ''})
+  const [sortDir, setSortDir] = useQueryState('dir', {defaultValue: ''})
+  const [searchQuery, setSearchQuery] = useQueryState('q', {defaultValue: ""})
+  const [bloqueFilter, setBloqueFilter] = useQueryState('bloque', {defaultValue: ""})
+  const [provinciaFilter, setProvinciaFilter] = useQueryState('provincia', {defaultValue: ""})
+  const [tipoVotoFilter, setTipoVotoFilter] = useQueryState('tipoVoto', {defaultValue: ""})
+
+  const sortConfig: SortConfig = {key: sortKey, direction: sortDir as "asc" | "desc"}
 
   const handleSort = (key: string, direction: "asc" | "desc") => {
-    setSortConfig({key, direction})
+    setSortKey(key)
+    setSortDir(direction)
+  }
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value)
   }
 
   if (!acta) {
@@ -33,10 +47,28 @@ export default function ActaPageContent({acta}: { acta: Acta | null }) {
     )
   }
 
-  const votosConDiputadosSorted = sortDiputados(
-    acta.votos.map((voto: Voto) => voto.diputadoObj) as Diputado[],
-    sortConfig
-  )
+  const filters: FilterConfig = {
+    ...(searchQuery ? {nombreCompleto: searchQuery} : {}),
+    ...(bloqueFilter ? {bloque: bloqueFilter} : {}),
+    ...(provinciaFilter ? {provincia: provinciaFilter} : {}),
+    ...(tipoVotoFilter ? {tipoVoto: tipoVotoFilter} : {}),
+  }
+
+  const diputados = acta.votos.map((voto: Voto) => voto.diputadoObj) as Diputado[]
+  const filteredDiputados = filterDiputados(diputados, filters)
+  const diputadosSorted = sortDiputados(filteredDiputados, sortConfig)
+
+  const filterOptions = [
+    {key: "bloque", label: "Bloque", type: "select", options: getUniqueValues(diputados, "bloque")},
+    {key: "provincia", label: "Provincia", type: "select", options: getUniqueValues(diputados, "provincia")},
+    {key: "tipoVoto", label: "Tipo de Voto", type: "select", options: getUniqueValues(diputados, "tipoVoto")},
+  ]
+
+  const handleFilterChange = (newFilters: FilterConfig) => {
+    if (newFilters.bloque !== undefined) setBloqueFilter(newFilters.bloque || "")
+    if (newFilters.provincia !== undefined) setProvinciaFilter(newFilters.provincia || "")
+    if (newFilters.tipoVoto !== undefined) setTipoVotoFilter(newFilters.tipoVoto || "")
+  }
 
   const total = acta.votosAfirmativos + acta.votosNegativos + acta.abstenciones + acta.ausentes
   const presentes = acta.votosAfirmativos + acta.votosNegativos + acta.abstenciones
@@ -261,12 +293,15 @@ export default function ActaPageContent({acta}: { acta: Acta | null }) {
         <CardHeader>
           <CardTitle>Votos de los Diputados</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
+          <FilterSidebar filters={filters} onFilterChange={handleFilterChange} filterOptions={filterOptions}/>
+
           <DataTable
-            data={votosConDiputadosSorted}
+            data={diputadosSorted}
             columns={columnasVotos}
             searchable
             searchKeys={["nombreCompleto", "bloque", "provincia", "tipoVoto"]}
+            onSearchChange={handleSearchChange}
             onRowClick={(diputado) => router.push(`/diputados/${diputado.id}`)}
             emptyMessage="No se encontraron votos para esta acta."
             sortConfig={sortConfig}
@@ -277,4 +312,3 @@ export default function ActaPageContent({acta}: { acta: Acta | null }) {
     </div>
   )
 }
-
