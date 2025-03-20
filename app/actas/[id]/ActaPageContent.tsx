@@ -12,7 +12,6 @@ import {Progress} from "@/components/ui/progress";
 import {VotacionesProgress} from "@/components/votaciones-progress";
 import {FilterSidebar} from "@/components/filter-sidebar";
 import {useQueryState} from "nuqs";
-import {useState} from "react";
 
 export default function ActaPageContent({acta}: { acta: Acta | null }) {
   const router = useRouter()
@@ -151,12 +150,12 @@ export default function ActaPageContent({acta}: { acta: Acta | null }) {
   ]
 
   return (
-    <div className="page-container flex flex-col gap-10">
-      <Card>
+    <div className="page-container relative flex flex-col gap-10">
+      <Card className="md:sticky md:top-16 z-10">
         <CardHeader>
-          <div className="flex justify-between items-start">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-start">
             <div>
-              <CardTitle className="text-2xl">{acta.titulo}</CardTitle>
+              <CardTitle className="text-lg md:text-2xl">{acta.titulo}</CardTitle>
             </div>
             <div className="flex flex-col justify-center items-center gap-0.5">
               <span className="text-xs text-muted-foreground">Resultado</span>
@@ -165,7 +164,6 @@ export default function ActaPageContent({acta}: { acta: Acta | null }) {
                 {acta.resultado}
               </Badge>
             </div>
-
           </div>
         </CardHeader>
         <CardContent>
