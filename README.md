@@ -1,20 +1,14 @@
-# Votaciones de Diputados
+# Votaciones de Diputados (archivado)
 
-Este proyecto es una aplicación web que permite a los usuarios ver y evaluar las votaciones de los Diputados Argentinos. Utiliza la API de [ArgentinaDatos](https://argentinadatos.com) para obtener los datos de las votaciones.
+> **Este repositorio está archivado.** El desarrollo se centralizó en
+> **[enzonotario/diputados-senadores](https://github.com/enzonotario/diputados-senadores)**
 
-## Sugerencias de mejora
+Sitio en producción: [diputados.argentinadatos.com](https://diputados.argentinadatos.com)
 
-Si quieres proponer una mejora podes hacerlo creando un issue en el repositorio.
+---
 
-## Tecnologías utilizadas
+## Legado
 
-- Next.js
-- Tailwind CSS
-- Shadcn UI
-- Lucide Icons
+Esta app (Next.js) permitía ver las votaciones de los Diputados Argentinos usando la API de [ArgentinaDatos](https://argentinadatos.com).
 
-## Instalación
-
-1. Clonar el repositorio
-2. Ejecutar `pnpm install`
-3. Ejecutar `pnpm run dev`
+Ya no se aceptan issues ni PRs acá: abrilos en el repo unificado.
